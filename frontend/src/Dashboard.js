@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 import clsx from 'clsx';
+import millify from "millify";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import Chart from './Chart';
 import {Line} from 'react-chartjs-2';
 import axios from "axios";
-import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
-
+import { useLocation, Router, Route, Switch } from "react-router";
 
 
 const drawerWidth = 240;
@@ -31,25 +15,9 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-        fontFamily: 'Helvetica Neue',
+        fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
 
-    },
-    appBar: {
-        zIndex: theme.zIndex.drawer + 1,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    menuButton: {
-        marginRight: 36,
-    },
-    menuButtonHidden: {
-        display: 'none',
-    },
-    title: {
-        flexGrow: 1,
     },
     graph: {
         maxWidth: 600,
@@ -127,24 +95,33 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Dashboard() {
+export default function Dashboard(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
     const [graphData, setGraphData] = React.useState(false);
     const [graphHeading, setGraphHeading] = React.useState(false);
+    const location = useLocation();
+
 
 
     useEffect(async () => {
+        // alert(location.pathname);
+        let url;
+        if(location.pathname.length < 10) {
+            url = "/v2/country/RUS/indicator/SP.POP.TOTL";
+        } else {
+            url = location.pathname;
+        }
         const response = await axios(
-          'https://api.worldbank.org/v2/country/RUS/indicator/SP.POP.TOTL?format=json&per_page=120',
+          `https://api.worldbank.org${url}?format=json&per_page=520`,
         );
      
         const labels = [];
         const values = [];
 
         if(response.data[1].length > 0) {
-            const item = response.data[1][0]
+            const item = response.data[1][0];
             setGraphHeading({
                 latestValue: item.value,
                 indicator: item.indicator.value,
@@ -154,8 +131,8 @@ export default function Dashboard() {
         }
 
         response.data[1].map(item => {
-            values.push(item.value);
-            labels.push(item.date);
+            values.unshift(item.value);
+            labels.unshift(item.date);
         });
 
 
@@ -164,36 +141,30 @@ export default function Dashboard() {
         console.log(response.data);
         setLoading(false);
 
-
-
-
-        const data = canvas => {
-            // const ctx = canvas.getContext("2d")
-            // const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-            // gradient.addColorStop(0, "rgba(50, 173, 252, 0.4)");
-            // gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
-
-            return {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Population',
-                    data: values,
-                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                    borderColor: "#32ADFC",
-                    borderWidth: 4,
-                    pointRadius: 0,
-                },
-            ],
-            }
-        }
-
+            const data = canvas => {
+                    // const ctx = canvas.getContext("2d")
+                    // const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                    // gradient.addColorStop(0, "rgba(50, 173, 252, 0.4)");
+                    // gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
+        
+                    return {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Population',
+                            data: values,
+                            tension: 0, 
+                            backgroundColor: "rgba(50, 173, 252, 0.2)",
+                            borderColor: "#32ADFC",
+                            borderWidth: 4,
+                            pointRadius: 0,
+                        },
+                    ],
+                    }
+                }
 
         setGraphData(data);
-
-
-
-      });
+      }, []);
 
 
     const handleDrawerOpen = () => {
@@ -207,42 +178,29 @@ export default function Dashboard() {
     return (
         <div className={classes.root }>
             <CssBaseline />
-            {/* <AppBar position="absolute" className={clsx(classes.appBar)}>
-                <Toolbar className={classes.toolbar}>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
-                    </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
-                </Toolbar>
-            </AppBar> */}
 
             <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
 
                 {/* <div className={classes.graphImage}>
                     <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
                 </div> */}
-                <div className={classes.graphContainer}>
-                    <h1 className={classes.graphTitle}>{graphHeading.latestValue}</h1>
+                {graphData && <div className={classes.graphContainer}>
+                
+                    <h1 className={classes.graphTitle}> {
+                    
+                        millify(graphHeading.latestValue, {
+                                precision: 2,
+                                lowercase: false,
+                                })
+                        }
+                    </h1>
+
                     <h1 className={classes.graphSubtitle}>{graphHeading.country}</h1>
                     <h1 className={classes.graphSubtitle}>{graphHeading.indicator}</h1>
 
                     
-                    {graphData && <Line
+                     <Line
                         className={classes.graph}
                         data={graphData}
                         options={{ 
@@ -260,7 +218,7 @@ export default function Dashboard() {
                                 xAxes: [{
                                     drawBorder: false,
                                     ticks: { 
-                                        display: false,
+                                        display: true,
                                         autoSkip: true,
                                         maxTicksLimit: 12,
                                         drawOnChartArea: false,
@@ -279,7 +237,7 @@ export default function Dashboard() {
                                 yAxes: [{
                                     drawBorder: false,
                                     ticks: { 
-                                        display: false,
+                                        display: true,
                                         drawOnChartArea: false,
                                         autoSkip: true,
                                         color: "rgba(0, 0, 0, 0.05)",
@@ -302,8 +260,8 @@ export default function Dashboard() {
                             }
                         
                         }}
-                    />}
-                </div>
+                    />
+                </div> }
                    
 
                 </Container>
