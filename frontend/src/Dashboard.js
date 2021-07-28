@@ -10,6 +10,7 @@ import axios from "axios";
 import { useLocation, Router, Route, Switch } from "react-router";
 
 
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -112,15 +113,21 @@ export default function Dashboard(props) {
             url = "/v2/country/RUS/indicator/SP.POP.TOTL";
         } else {
             url = location.pathname;
+            alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
+
         }
         const response = await axios(
-          `https://api.worldbank.org${url}?format=json&per_page=520`,
+          `https://api.worldbank.org${url}?format=json&mrnev=120`,
         );
      
         const labels = [];
         const values = [];
 
+        // let i = 0;
         if(response.data[1].length > 0) {
+            // while(response[1][i].value == null) {
+            //     i++;
+            // }
             const item = response.data[1][0];
             setGraphHeading({
                 latestValue: item.value,
@@ -131,8 +138,10 @@ export default function Dashboard(props) {
         }
 
         response.data[1].map(item => {
+            if(item.value !== null) {
             values.unshift(item.value);
             labels.unshift(item.date);
+            }
         });
 
 
