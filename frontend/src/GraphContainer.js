@@ -5,7 +5,7 @@ import millify from "millify";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import {Line} from 'react-chartjs-2';
+import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
 import { useLocation, Router, Route, Switch } from "react-router";
 
@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Dashboard(props) {
+export default function GraphContainer(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
@@ -106,74 +106,77 @@ export default function Dashboard(props) {
 
 
 
-    useEffect(async () => {
-        // alert(location.pathname);
-        let url;
-        if(location.pathname.length < 10) {
-            url = "/v2/country/RUS/indicator/SP.POP.TOTL";
-        } else {
-            url = location.pathname;
-            alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
+    // useEffect(async () => {
+    //     // alert(location.pathname);
+    //     let url;
+    //     if(location.pathname.length < 10) {
+    //         url = "/v2/country/RUS/indicator/SP.POP.TOTL";
+    //     } else {
+    //         url = location.pathname;
+    //         // alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
 
-        }
-        const response = await axios(
-          `https://api.worldbank.org${url}?format=json&mrnev=120`,
-        );
+    //     }
+    //     const response = await axios(
+    //       `https://api.worldbank.org${url}?format=json&mrnev=120`,
+    //     );
      
-        const labels = [];
-        const values = [];
+    //     const labels = [];
+    //     const values = [];
+    //     const objects = {};
 
-        // let i = 0;
-        if(response.data[1].length > 0) {
-            // while(response[1][i].value == null) {
-            //     i++;
-            // }
-            const item = response.data[1][0];
-            setGraphHeading({
-                latestValue: item.value,
-                indicator: item.indicator.value,
-                country: item.country.value,
-                date: item.date,
-            });
-        }
+    //     // let i = 0;
+    //     if(response.data[1].length > 0) {
+    //         // while(response[1][i].value == null) {
+    //         //     i++;
+    //         // }
+    //         const item = response.data[1][0];
+    //         setGraphHeading({
+    //             latestValue: item.value,
+    //             indicator: item.indicator.value,
+    //             country: item.country.value,
+    //             date: item.date,
+    //         });
+    //     }
 
-        response.data[1].map(item => {
-            if(item.value !== null) {
-            values.unshift(item.value);
-            labels.unshift(item.date);
-            }
-        });
+    //     response.data[1].map(item => {
+    //         if(item.value !== null) {
+
+    //         values.unshift({x: item.date, y: item.value});
+    //         labels.unshift(item.date);
+    //         }
+    //     });
 
 
-        console.log(values);
-        console.log(labels);        
-        console.log(response.data);
-        setLoading(false);
+    //     console.log(values);
+    //     console.log(labels);        
+    //     console.log(response.data);
+    //     setLoading(false);
 
             const data = canvas => {
-                    // const ctx = canvas.getContext("2d")
-                    // const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                    // gradient.addColorStop(0, "rgba(50, 173, 252, 0.4)");
-                    // gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
+                    const ctx = canvas.getContext("2d")
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                    gradient.addColorStop(0, "rgba(50, 173, 252, 0.2)");
+                    gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
         
                     return {
-                    labels: labels,
+                    labels: props.data.labels,
                     datasets: [
                         {
                             label: 'Population',
-                            data: values,
+                            data: props.data.data,
                             tension: 0, 
-                            backgroundColor: "rgba(50, 173, 252, 0.2)",
+                            showLine: true,
+                            backgroundColor: gradient,
                             borderColor: "#32ADFC",
                             borderWidth: 4,
                             pointRadius: 0,
-                        },
+                        }
                     ],
                     }
                 }
 
-        setGraphData(data);
-      }, []);
+    //     setGraphData(data);
+    //   }, []);
 
 
     const handleDrawerOpen = () => {
@@ -185,7 +188,7 @@ export default function Dashboard(props) {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
-        <div className={classes.root }>
+        <div className={classes.root}>
             <CssBaseline />
 
             <main className={classes.content}>
@@ -194,24 +197,23 @@ export default function Dashboard(props) {
                 {/* <div className={classes.graphImage}>
                     <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
                 </div> */}
-                {graphData && <div className={classes.graphContainer}>
-                
-                    <h1 className={classes.graphTitle}> {
+                <div className={classes.graphContainer}>
+                    {props.data.latestValue && <h1 className={classes.graphTitle}> {
                     
-                        millify(graphHeading.latestValue, {
+                        millify(props.data.latestValue, {
                                 precision: 2,
                                 lowercase: false,
                                 })
                         }
-                    </h1>
+                    </h1>}
 
-                    <h1 className={classes.graphSubtitle}>{graphHeading.country}</h1>
-                    <h1 className={classes.graphSubtitle}>{graphHeading.indicator}</h1>
-
+                    <h1 className={classes.graphSubtitle}>{props.data.country}</h1>
+                    <h1 className={classes.graphSubtitle}>{props.data.indicator}</h1>
                     
-                     <Line
+                    
+                     <Scatter
                         className={classes.graph}
-                        data={graphData}
+                        data={data}
                         options={{ 
                             maintainAspectRatio: true, 
                             responsive: true,
@@ -235,8 +237,9 @@ export default function Dashboard(props) {
                                     gridLines: {
                                         drawTicks: false,
                                         tickMarkLength: 0,
+                                        maxTicksLimit: 14,
                                         // drawOnChartArea: true,
-                                        color: "rgba(0, 0, 0, 0.05)",
+                                        color: "rgba(0, 0, 0, 0.03)",
                                         drawBorder: false,
                                         tickMarkLength: false,
                                         display: true,
@@ -249,8 +252,8 @@ export default function Dashboard(props) {
                                         display: true,
                                         drawOnChartArea: false,
                                         autoSkip: true,
-                                        color: "rgba(0, 0, 0, 0.05)",
-                                        maxTicksLimit: 10,
+                                        color: "rgba(0, 0, 0, 0.03)",
+                                        maxTicksLimit: 9,
                                         drawBorder: false,
                                         
 
@@ -270,7 +273,8 @@ export default function Dashboard(props) {
                         
                         }}
                     />
-                </div> }
+                    
+                </div>
                    
 
                 </Container>
