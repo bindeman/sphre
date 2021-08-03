@@ -8,6 +8,8 @@ import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
 import { useLocation, Router, Route, Switch } from "react-router";
+const queryString = require('query-string');
+
 
 
 
@@ -78,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     appBarSpacer: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
-        height: '100vh',
+        height: 'fit-content',
         overflow: 'auto',
     },
     container: {
@@ -157,6 +159,10 @@ export default function GraphContainer(props) {
                     const gradient = ctx.createLinearGradient(0, 0, 0, 350);
                     gradient.addColorStop(0, "rgba(50, 173, 252, 0.2)");
                     gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
+
+                    const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
+                    gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
+                    gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
         
                     return {
                     labels: props.data.labels,
@@ -164,11 +170,21 @@ export default function GraphContainer(props) {
                         {
                             label: 'Population',
                             data: props.data.data,
-                            tension: 0, 
+                            tension: 0.15, 
                             showLine: true,
                             backgroundColor: gradient,
                             borderColor: "#32ADFC",
-                            borderWidth: 4,
+                            borderWidth: 6,
+                            pointRadius: 0,
+                        },
+                        {
+                            label: 'Fertility Rate',
+                            data: props.data.data,
+                            tension: 0.15, 
+                            showLine: true,
+                            backgroundColor: gradient2,
+                            borderColor: "#F5A623",
+                            borderWidth: 6,
                             pointRadius: 0,
                         }
                     ],
@@ -186,6 +202,9 @@ export default function GraphContainer(props) {
         setOpen(false);
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+    const parsed = queryString.parse(location.pathname);
+    console.log("QUERY STRING: ", parsed);
 
     return (
         <div className={classes.root}>

@@ -115,13 +115,13 @@ export default function GraphContent(props) {
     useEffect(async () => {
         // alert(location.pathname);
         let url;
-        if(props.country === undefined) {
-            url = location.pathname;
-        } else {
-            url = `v2/country/${countries[props.country]}/indicator/${indicators[props.indicator]}`;
+        // if(props.country === undefined) {
+        //     url = location.pathname;
+        // } else {
+            url = `v2/country/${props.country}/indicator/${props.indicator}`;
             // alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
 
-        }
+        // }
         // alert(`https://api.worldbank.org/v2/country/${countries[props.country]}/indicator/${indicators[props.indicator]}?format=json&mrnev=120`)
         // const response = await axios(
         //     `https://api.worldbank.org/v2/country/${countries[props.country]}/indicator/${indicators[props.indicator]}?format=json&mrnev=120`
