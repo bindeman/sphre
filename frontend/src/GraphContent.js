@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
-
     },
     graph: {
         maxWidth: 600,
@@ -131,13 +130,14 @@ export default function GraphContent(props) {
           `https://api.worldbank.org/${url}?format=json&mrnev=220`,
         );
      
+        const datas = {};
         const labels = [];
         const values = [];
 
-        console.log(response.data[1]);
+        console.log("RESPONSE", response.data[1]);
 
         // let i = 0;
-        if(response.data[1].length > 0) {
+        if(response.data[1] && response.data[1].length > 0) {
             // while(response[1][i].value == null) {
             //     i++;
             // }
@@ -148,15 +148,19 @@ export default function GraphContent(props) {
                 country: item.country.value,
                 date: item.date,
             });
-        }
+        
 
         response.data[1].map(item => {
             if(item.value !== null) {
-
-            values.unshift({x: item.date, y: item.value});
-            labels.unshift(item.date);
+                if(datas[item.country.value] == null) {
+                    datas[item.country.value] = [];
+                }
+                datas[item.country.value].unshift({x: item.date, y: item.value});
+            // values.unshift({x: item.date, y: item.value});
+            // labels.unshift(item.date);
             }
         });
+        
 
 
         // console.log(values);
@@ -175,7 +179,7 @@ export default function GraphContent(props) {
             const item = response.data[1][0];
 
             setGraphData({
-                data: values,
+                data: datas,
                 labels: labels,
                 latestValue: item.value,
                 indicator: item.indicator.value,
@@ -183,10 +187,8 @@ export default function GraphContent(props) {
                 date: item.date,
             });
         }
-
         setLoading(false);
-
-
+    }
       }, []);
 
 

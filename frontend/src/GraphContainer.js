@@ -7,6 +7,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
+import {graphColors} from './constants'
+
 import { useLocation, Router, Route, Switch } from "react-router";
 const queryString = require('query-string');
 
@@ -155,39 +157,58 @@ export default function GraphContainer(props) {
     //     setLoading(false);
 
             const data = canvas => {
-                    const ctx = canvas.getContext("2d")
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                    gradient.addColorStop(0, "rgba(50, 173, 252, 0.2)");
-                    gradient.addColorStop(1, "rgba(50, 173, 252, 0.0)");
 
-                    const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
-                    gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
-                    gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
-        
-                    return {
-                    labels: props.data.labels,
-                    datasets: [
-                        {
-                            label: 'Population',
-                            data: props.data.data,
+
+                    // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
+                    // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
+                    // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
+
+                    let datasets2 = [];
+                    const countries = Object.entries(props.data.data);
+
+                    Object.entries(props.data.data).forEach((entry, index) => {
+                        const [countryName, countryData] = entry;
+                        const ctx = canvas.getContext("2d")
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                        gradient.addColorStop(0, graphColors[index].background);
+                        gradient.addColorStop(1, graphColors[index].clear);
+
+                        console.log(countryName);
+                        console.log(countryData);
+                        datasets2.push({
+                            label: countryName,
+                            data: countryData,
                             tension: 0.15, 
                             showLine: true,
                             backgroundColor: gradient,
-                            borderColor: "#32ADFC",
+                            borderColor: graphColors[index].line,
                             borderWidth: 6,
                             pointRadius: 0,
-                        },
-                        {
-                            label: 'Fertility Rate',
-                            data: props.data.data,
-                            tension: 0.15, 
-                            showLine: true,
-                            backgroundColor: gradient2,
-                            borderColor: "#F5A623",
-                            borderWidth: 6,
-                            pointRadius: 0,
-                        }
-                    ],
+                        });
+                      });
+
+                    // for(const [countryName, countryData] of countries) {
+                    //     console.log(countryName);
+                    //     console.log(countryData);
+                    //     datasets2.push({
+                    //         label: countryName,
+                    //         data: countryData,
+                    //         tension: 0.15, 
+                    //         showLine: true,
+                    //         backgroundColor: "rgba(50, 173, 252, 0.2)",
+                    //         borderColor: "#32ADFC",
+                    //         borderWidth: 6,
+                    //         pointRadius: 0,
+                    //     });
+                    // }
+
+                    console.log(datasets2);
+        
+                    return {
+                        
+                    labels: props.data.labels,
+                    datasets: datasets2,
+
                     }
                 }
 
@@ -274,8 +295,12 @@ export default function GraphContainer(props) {
                                         color: "rgba(0, 0, 0, 0.03)",
                                         maxTicksLimit: 9,
                                         drawBorder: false,
-                                        
-
+                                        callback: function(value, index, values) {
+                                            return millify(value, {
+                                                precision: 2,
+                                                lowercase: false,
+                                                })
+                                        }
                                      },
                                     gridLines: {
                                         drawTicks: false,

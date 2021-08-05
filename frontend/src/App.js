@@ -15,16 +15,16 @@ const queryString = require('query-string');
 // const location = useLocation();
 
 
-
-const parsed = queryString.parse(window.location.pathname, {arrayFormat: 'separator', arrayFormatSeparator: ';'});
+//{arrayFormat: 'separator', arrayFormatSeparator: ';'}
+const parsed = queryString.parse(window.location.pathname);
 console.log("QUERY STRING: ", parsed);
 
 
 
 function App() {
   const history = createBrowserHistory();
-  const [country, setCountry] = React.useState(parsed.countries);
-  const [indicator, setIndicator] = React.useState(parsed.indicators);
+  const [country, setCountry] = React.useState(parsed.countries || "RUS");
+  const [indicator, setIndicator] = React.useState(parsed.indicators || "SP.DYN.TFRT.IN");
 
 
   const navigateTo = (country, indicator) => {
