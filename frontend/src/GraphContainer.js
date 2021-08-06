@@ -25,10 +25,10 @@ const useStyles = makeStyles((theme) => ({
 
     },
     graph: {
-        maxWidth: 600,
+        width: "100%",
     },
     graphContainer: {
-        maxWidth: '900px',
+        // maxWidth: '900px',
         display: 'block',
         margin: 'auto',
     },
@@ -42,17 +42,24 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'left',
         fontSize: '65px',
         fontWeight: 500,
-        marginBottom: '0px',
+        marginBottom: '50px',
+        marginTop: "-20px",
 
     },
     graphSubtitle: {
         fontWeight: 400,
         textAlign: 'left',
-        fontSize: '25px',
+        fontSize: '16px',
         color: '#B8B8B8',
-        marginTop: '0px',
-
-
+        textTransform: 'uppercase',
+        marginTop: '40px',
+    },
+    graphIndicator: {
+        fontWeight: 400,
+        textAlign: 'left',
+        fontSize: '22px',
+        color: '#B8B8B8',
+        marginTop: '-10px',
     },
     graphCategory: {
         fontWeight: 500,
@@ -84,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         height: 'fit-content',
         overflow: 'auto',
+        padding: 50,
+        backgroundColor: "#fff",
+        borderRadius: 30,
+
     },
     container: {
         paddingTop: theme.spacing(4),
@@ -173,6 +184,7 @@ export default function GraphContainer(props) {
                         gradient.addColorStop(0, graphColors[index].background);
                         gradient.addColorStop(1, graphColors[index].clear);
 
+                        
                         console.log(countryName);
                         console.log(countryData);
                         datasets2.push({
@@ -238,6 +250,10 @@ export default function GraphContainer(props) {
                     <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
                 </div> */}
                 <div className={classes.graphContainer}>
+                <h1 className={classes.graphIndicator}>{props.data.indicator}</h1>
+
+                    <h1 className={classes.graphSubtitle}>{props.data.country}</h1>
+
                     {props.data.latestValue && <h1 className={classes.graphTitle}> {
                     
                         millify(props.data.latestValue, {
@@ -247,8 +263,6 @@ export default function GraphContainer(props) {
                         }
                     </h1>}
 
-                    <h1 className={classes.graphSubtitle}>{props.data.country}</h1>
-                    <h1 className={classes.graphSubtitle}>{props.data.indicator}</h1>
                     
                     
                      <Scatter
@@ -271,8 +285,11 @@ export default function GraphContainer(props) {
                                     ticks: { 
                                         display: true,
                                         autoSkip: true,
+                                        padding: 10,
                                         maxTicksLimit: 12,
-                                        drawOnChartArea: false,
+                                        drawOnChartArea: false
+                                        // fontColor: '#C0C0C0'
+
                                     },
                                     gridLines: {
                                         drawTicks: false,
@@ -291,9 +308,11 @@ export default function GraphContainer(props) {
                                     ticks: { 
                                         display: true,
                                         drawOnChartArea: false,
+                                        padding: 10,
                                         autoSkip: true,
                                         color: "rgba(0, 0, 0, 0.03)",
                                         maxTicksLimit: 9,
+                                        // fontColor: '#C0C0C0',
                                         drawBorder: false,
                                         callback: function(value, index, values) {
                                             return millify(value, {

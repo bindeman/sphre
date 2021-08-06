@@ -1,18 +1,34 @@
 
-export const countries = {
-    "Russia": "RUS",
-    "United States": "USA",
-    "France": "FR",
-    "China": "CN",
-    "Mexico": "MX",
+// export const countries = {
+//     "Russia": "RUS",
+//     "United States": "USA",
+//     "France": "FR",
+//     "China": "CN",
+//     "Mexico": "MX",
+//   }
+
+  export const countries = {
+    "RUS": "Russian Federation",
+    "USA": "United States",
+    "FR": "France",
+    "CN": "China",
+    "MX": "Mexico",
   }
   
-export const indicators = {
-    "Fertility Rate": "SP.DYN.TFRT.IN",
-    "Population": "SP.POP.TOTL",
-    "Net Migration": "SM.POP.NETM",
-    "% of Employment": "SL.EMP.WORK.ZS",
-    "GDP": "NY.GDP.MKTP.CD"
+// export const indicators = {
+//     "Fertility Rate": "SP.DYN.TFRT.IN",
+//     "Population": "SP.POP.TOTL",
+//     "Net Migration": "SM.POP.NETM",
+//     "% of Employment": "SL.EMP.WORK.ZS",
+//     "GDP": "NY.GDP.MKTP.CD"
+//   }
+
+  export const indicators = {
+    "SP.DYN.TFRT.IN": "Fertility Rate",
+    "SP.POP.TOTL": "Population",
+    "SM.POP.NETM": "Net Migration",
+    "SL.EMP.WORK.ZS": "% of Employment",
+    "NY.GDP.MKTP.CD": "GDP"
   }
 
   export const graphColors = [

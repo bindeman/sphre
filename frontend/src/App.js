@@ -8,6 +8,7 @@ import {countries, indicators} from './constants'
 
 
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 
@@ -35,8 +36,8 @@ function App() {
   const handleCountrySelection = (event, selected) => {
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
     // alert(country)
-    history.push(navigateTo(countries[selected], indicator));
-    setCountry(countries[selected]);
+    history.push(navigateTo(selected, indicator));
+    setCountry(selected);
 
     
   };
@@ -44,11 +45,10 @@ function App() {
   const handleIndicatorSelection = (event, selected) => {
     // alert(indicator)
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
-    history.push(navigateTo(country, indicators[selected])); 
-    setIndicator(indicators[selected]);
+    history.push(navigateTo(country, selected)); 
+    setIndicator(selected);
 
   };
-
 
   // setCountry(parsed.countries)
   // setIndicator(parsed.indicator)
@@ -62,10 +62,11 @@ function App() {
             freeSolo
             id="free-solo-2-demo"
             disableClearable
-            value={country}
+            value={countries[country] || "Multiple"}
             onChange={handleCountrySelection}
             // placeholder="Country"
             options={Object.keys(countries).map((option) => option)}
+            renderOption={(option) => <Typography noWrap>{countries[option]}</Typography>}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -82,9 +83,11 @@ function App() {
                 id="free-solo-3-demo"
                 disableClearable
                 placeholder="Indicator"
-                value={indicator}
+                value={indicators[indicator] || "Multiple"}
                 onChange={handleIndicatorSelection}
                 options={Object.keys(indicators).map((option) => option)}
+                getOptionLabel={(option) => option}
+                renderOption={(option) => <Typography noWrap>{indicators[option]}</Typography>}
                 renderInput={(params) => (
                   <TextField
                     {...params}
