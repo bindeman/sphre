@@ -26,11 +26,22 @@ const useStyles = makeStyles((theme) => ({
     },
     graph: {
         width: "100%",
+        maxHeight: '100vh',
+    },
+    statsContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        rowGap: 0,
+        columnGap: 30,
+        marginBottom: 30,
+        marginTop: 20,
+
     },
     graphContainer: {
-        // maxWidth: '900px',
         display: 'block',
         margin: 'auto',
+
     },
     graphImage: {
         maxWidth: '100px',
@@ -40,11 +51,18 @@ const useStyles = makeStyles((theme) => ({
     },
     graphTitle: {
         textAlign: 'left',
-        fontSize: '65px',
+        fontSize: 65,
+        letterSpacing: "-1px",
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 30,
+        },
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 22,
+        },
         fontWeight: 500,
-        marginBottom: '50px',
+        // marginBottom: '50px',
         marginTop: "-20px",
-
+        marginBottom: 0,
     },
     graphSubtitle: {
         fontWeight: 400,
@@ -52,14 +70,14 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '16px',
         color: '#B8B8B8',
         textTransform: 'uppercase',
-        marginTop: '40px',
+        // marginTop: '40px',
     },
     graphIndicator: {
         fontWeight: 400,
         textAlign: 'left',
         fontSize: '22px',
         color: '#B8B8B8',
-        marginTop: '-10px',
+        // marginTop: '-10px',
     },
     graphCategory: {
         fontWeight: 500,
@@ -91,14 +109,18 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         height: 'fit-content',
         overflow: 'auto',
-        padding: 50,
+        padding: theme.spacing(6),
+        [theme.breakpoints.between('xs', 'sm')]: {
+            padding: theme.spacing(2),
+        },
         backgroundColor: "#fff",
+        // maxWidth: 'calc(100% - 250px)',
         borderRadius: 30,
 
     },
     container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        // paddingTop: theme.spacing(4),
+        // paddingBottom: theme.spacing(4),
     },
     paper: {
         padding: theme.spacing(2),
@@ -252,16 +274,41 @@ export default function GraphContainer(props) {
                 <div className={classes.graphContainer}>
                 <h1 className={classes.graphIndicator}>{props.data.indicator}</h1>
 
-                    <h1 className={classes.graphSubtitle}>{props.data.country}</h1>
+                    {/* <h1 className={classes.graphSubtitle}>{props.data.country}</h1> */}
 
-                    {props.data.latestValue && <h1 className={classes.graphTitle}> {
+                    <div className={classes.statsContainer}>
+
+                        {Object.entries(props.data.data).map(item => {
+
+                            const [countryName, countryData] = item;
+
+                            return(
+                                <div> 
+                                    <h1 className={classes.graphSubtitle}>{countryName}</h1>
+                                    
+                                    <h1 className={classes.graphTitle}> {
+                        
+                                        millify(countryData[countryData.length - 1].y, {
+                                                precision: 2,
+                                                lowercase: false,
+                                                })
+
+                                    }
+                                    </h1>
+                                </div>
+                            )
+                        })}
+
+                    </div>
+
+                    {/* {props.data.latestValue && <h1 className={classes.graphTitle}> {
                     
                         millify(props.data.latestValue, {
                                 precision: 2,
                                 lowercase: false,
                                 })
                         }
-                    </h1>}
+                    </h1>} */}
 
                     
                     

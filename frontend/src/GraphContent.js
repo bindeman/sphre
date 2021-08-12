@@ -127,7 +127,7 @@ export default function GraphContent(props) {
         // );
 
         const response = await axios(
-          `https://api.worldbank.org/${url}?format=json&mrnev=220`,
+          `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`,
         );
      
         const datas = {};
@@ -196,17 +196,13 @@ export default function GraphContent(props) {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
-        <div className={classes.root}>
-            <CssBaseline />
+            // <CssBaseline />
 
-            <main className={classes.content}>
                 <Container maxWidth="lg" className={classes.container}>
                 {!loading &&    
                     <GraphContainer labels={graphLabels} data={graphData}/>
                 }
                
                 </Container>
-            </main>
-        </div>
     );
 }

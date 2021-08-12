@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="App">
 
-    <div style={{maxWidth: 300, margin: "auto", display: "block", paddingTop: 20}}>
+    <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: 40, maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
     <Autocomplete
             freeSolo
             id="free-solo-2-demo"
@@ -99,11 +99,13 @@ function App() {
                 )}
               />
       </div>
+      <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
       <Router history={history}>
       <Switch>
         <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} country={country} indicator={indicator} />}/>
       </Switch>
       </Router>
+      </div>
     </div>
   );
 }
