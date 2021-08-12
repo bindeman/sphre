@@ -83,11 +83,12 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'auto',
     },
     container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
+        margin: theme.spacing(5),
+        // maxHeight: '80vh',
+        // paddingBottom: theme.spacing(4),
     },
     paper: {
-        padding: theme.spacing(2),
+        // padding: theme.spacing(2),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
@@ -198,11 +199,12 @@ export default function GraphContent(props) {
     return (
             // <CssBaseline />
 
-                <Container maxWidth="lg" className={classes.container}>
-                {!loading &&    
-                    <GraphContainer labels={graphLabels} data={graphData}/>
-                }
-               
-                </Container>
+                // <Container maxWidth="lg" className={classes.container}>
+                <div className={classes.container}>
+                    {!loading &&    
+                        <GraphContainer labels={graphLabels} data={graphData}/>
+                    }
+               </div>
+                // </Container>
     );
 }

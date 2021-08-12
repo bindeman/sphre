@@ -5,24 +5,54 @@ import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} fr
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, indicators} from './constants'
+import { makeStyles } from '@material-ui/core/styles';
+
 
 
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+// import List from '@material-ui/core/List'
+// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import {List, Avatar, ListItem, ListItemSecondaryAction, ListItemAvatar, ListItemText, IconButton} from '@material-ui/core'
+import { render } from 'react-dom';
+// import IconButton from 'material-ui/core/IconButton';
+// import FolderIcon from 'material-ui/icons/FolderIcon';
+// import DeleteIcon from 'material-ui/icons/DeleteIcon';
 
 
 const queryString = require('query-string');
 // const location = useLocation();
 
+function generate(element) {
+  return [0, 1, 2].map((value) =>
+    React.cloneElement(element, {
+      key: value,
+    }),
+  );
+}
 
 //{arrayFormat: 'separator', arrayFormatSeparator: ';'}
 const parsed = queryString.parse(window.location.pathname);
-console.log("QUERY STRING: ", parsed);
+const tokenizeParsed = queryString.parse(window.location.pathname, {arrayFormat: 'separator', arrayFormatSeparator: ';'});
 
+console.log("QUERY STRING: ", parsed);
+console.log("QUERY STRING: ", tokenizeParsed);
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+      display: 'flex',
+      fontFamily: 'Helvetica Neue, Helvetica, Arial',
+      letterSpacing: '-0.03em',
+  },
+  title: {
+    fontSize: 23,
+  }
+}));
 
 
 function App() {
+  const classes = useStyles();
   const history = createBrowserHistory();
   const [country, setCountry] = React.useState(parsed.countries || "RUS");
   const [indicator, setIndicator] = React.useState(parsed.indicators || "SP.DYN.TFRT.IN");
@@ -98,12 +128,43 @@ function App() {
                   />
                 )}
               />
+
+    <Typography variant="h6" className={classes.title}>
+            Indicators
+          </Typography>
+          <div>
+            <List dense={true}>
+            {tokenizeParsed && tokenizeParsed.countries.map(countryKey => (
+
+              
+                <ListItem>
+                  <ListItemAvatar>
+                    <Avatar>
+                      {/* <FolderIcon /> */}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={countries[countryKey]}
+                    secondary={countryKey}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="delete">
+                      {/* <DeleteIcon /> */}
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>)
+             
+
+            )}
+            </List>
+          </div>
+      
       </div>
       <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
       <Router history={history}>
-      <Switch>
-        <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} country={country} indicator={indicator} />}/>
-      </Switch>
+        <Switch>
+          <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} country={country} indicator={indicator} />}/>
+        </Switch>
       </Router>
       </div>
     </div>

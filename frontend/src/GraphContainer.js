@@ -19,7 +19,7 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        display: 'flex',
+        // display: 'flex',
         fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
 
@@ -33,7 +33,11 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'row',
         flexWrap: 'wrap',
         rowGap: 0,
-        columnGap: 30,
+        columnGap: 60,
+        [theme.breakpoints.down('sm')]: {
+            columnGap: 30,
+
+        },
         marginBottom: 30,
         marginTop: 20,
 
@@ -51,10 +55,13 @@ const useStyles = makeStyles((theme) => ({
     },
     graphTitle: {
         textAlign: 'left',
-        fontSize: 65,
+        fontSize: 50,
         letterSpacing: "-1px",
+        [theme.breakpoints.up('lg')]: {
+            fontSize: 65,
+        },
         [theme.breakpoints.down('sm')]: {
-            fontSize: 30,
+            fontSize: 32,
         },
         [theme.breakpoints.down('xs')]: {
             fontSize: 22,
@@ -62,6 +69,9 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 500,
         // marginBottom: '50px',
         marginTop: "-20px",
+        [theme.breakpoints.down('md')]: {
+            marginTop: "-16px"
+        },
         marginBottom: 0,
     },
     graphSubtitle: {
@@ -77,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'left',
         fontSize: '22px',
         color: '#B8B8B8',
-        // marginTop: '-10px',
+        marginTop: 0,
     },
     graphCategory: {
         fontWeight: 500,
@@ -107,11 +117,21 @@ const useStyles = makeStyles((theme) => ({
     appBarSpacer: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
-        height: 'fit-content',
+        // height: 'fit-content',
         overflow: 'auto',
         padding: theme.spacing(6),
-        [theme.breakpoints.between('xs', 'sm')]: {
+        [theme.breakpoints.down('md')]: {
+            padding: theme.spacing(4),
+        },
+        [theme.breakpoints.down('sm')]: {
             padding: theme.spacing(2),
+            borderRadius: 20,
+
+        },
+        [theme.breakpoints.down('xs')]: {
+            padding: theme.spacing(1),
+            borderRadius: 10,
+
         },
         backgroundColor: "#fff",
         // maxWidth: 'calc(100% - 250px)',
@@ -123,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
         // paddingBottom: theme.spacing(4),
     },
     paper: {
-        padding: theme.spacing(2),
+        // padding: theme.spacing(2),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
@@ -266,7 +286,7 @@ export default function GraphContainer(props) {
             <CssBaseline />
 
             <main className={classes.content}>
-                <Container maxWidth="lg" className={classes.container}>
+                {/* <Container maxWidth="lg" className={classes.container}> */}
 
                 {/* <div className={classes.graphImage}>
                     <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
@@ -387,7 +407,7 @@ export default function GraphContainer(props) {
                 </div>
                    
 
-                </Container>
+                {/* </Container> */}
             </main>
         </div>
     );
