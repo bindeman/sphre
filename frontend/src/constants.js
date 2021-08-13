@@ -13,6 +13,8 @@
     "FR": "France",
     "CN": "China",
     "MX": "Mexico",
+    "DE": "Germany",
+    "SA": "Saudi Arabia",
   }
   
 // export const indicators = {

@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
     graphTitle: {
         textAlign: 'left',
         fontSize: 50,
+        transition: "font-size 0.25s",
         letterSpacing: "-1px",
         [theme.breakpoints.up('lg')]: {
             fontSize: 65,
@@ -371,6 +372,7 @@ export default function GraphContainer(props) {
                                     }
                                 }],
                                 yAxes: [{
+                                    position: 'right',
                                     drawBorder: false,
                                     ticks: { 
                                         display: true,

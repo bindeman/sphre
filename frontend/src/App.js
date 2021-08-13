@@ -1,11 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import React from "react";
+import React, { useEffect } from "react";
 import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} from "react-router-dom";
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, indicators} from './constants'
 import { makeStyles } from '@material-ui/core/styles';
+import {graphColors} from './constants'
+
 
 
 
@@ -47,15 +49,41 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: 23,
+  },
+  listPin: {
+    minWidth: "8px", 
+    height: "24px", 
+    flexShrink: 0,
+
+    marginRight: "16px",
+    marginLeft: "16px",
+    backgroundColor: 'grey', 
+    borderRadius: "4px",
+    listPin: "#E9E9E9",
   }
 }));
 
+function putStringIntoArr() {
+  if (!Array.isArray(tokenizeParsed.countries)) {
+      tokenizeParsed.countries = new Array(tokenizeParsed.countries)
+  }
+
+  if (!Array.isArray(tokenizeParsed.indicators)) {
+    tokenizeParsed.indicators = new Array(tokenizeParsed.indicators)
+  }
+
+}
 
 function App() {
   const classes = useStyles();
   const history = createBrowserHistory();
   const [country, setCountry] = React.useState(parsed.countries || "RUS");
   const [indicator, setIndicator] = React.useState(parsed.indicators || "SP.DYN.TFRT.IN");
+
+
+  // useEffect(() => {
+  //   putStringIntoArr();
+  // });
 
 
   const navigateTo = (country, indicator) => {
@@ -87,7 +115,7 @@ function App() {
   return (
     <div className="App">
 
-    <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: 40, maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
+    <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
     <Autocomplete
             freeSolo
             id="free-solo-2-demo"
@@ -134,15 +162,15 @@ function App() {
           </Typography>
           <div>
             <List dense={true}>
-            {tokenizeParsed && tokenizeParsed.countries.map(countryKey => (
+            { Array.isArray(tokenizeParsed.countries) && tokenizeParsed.countries.map((countryKey, index) => (
 
               
                 <ListItem>
-                  <ListItemAvatar>
-                    <Avatar>
-                      {/* <FolderIcon /> */}
-                    </Avatar>
-                  </ListItemAvatar>
+                  {/* <ListItemAvatar disablePadding> */}
+                    <div className={classes.listPin} style={{backgroundColor: graphColors[index].line}}>
+
+                    </div>
+                  {/* </ListItemAvatar> */}
                   <ListItemText
                     primary={countries[countryKey]}
                     secondary={countryKey}
