@@ -8,8 +8,8 @@
 //   }
 
   export const countries = {
-    "RUS": "Russian Federation",
-    "USA": "United States",
+    "RU": "Russian Federation",
+    "US": "United States",
     "FR": "France",
     "CN": "China",
     "MX": "Mexico",

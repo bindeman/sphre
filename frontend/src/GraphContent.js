@@ -106,19 +106,24 @@ export default function GraphContent(props) {
     const [loading, setLoading] = React.useState(true);
     const [graphData, setGraphData] = React.useState(null);
     const [graphLabels, setGraphLabels] = React.useState(false);
+    const [responseState, setResponseState] = React.useState(null);
 
-    const [graphHeading, setGraphHeading] = React.useState(false);
     const location = useLocation();
 
 
 
     useEffect(async () => {
         // alert(location.pathname);
+        // setLoading(true);
+        // setGraphData(null);
+
         let url;
         // if(props.country === undefined) {
         //     url = location.pathname;
         // } else {
-            url = `v2/country/${props.country}/indicator/${props.indicator}`;
+            const countryString = props.country.join(';');
+            console.log("REQUEST COUNTRIES: ", props.country.join(';'));
+            url = `v2/country/${countryString}/indicator/${props.indicator}`;
             // alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
 
         // }
@@ -128,35 +133,37 @@ export default function GraphContent(props) {
         // );
 
         const response = await axios(
-          `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`,
+          `https://api.worldbank.org/${url}?format=json&per_page=520`,
         );
      
         const datas = {};
         const labels = [];
         const values = [];
-
+        console.log("REQUEST", `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`)
         console.log("RESPONSE", response.data[1]);
 
+        // setResponseState[response.data[1]];
+        // console.log("Response State: ", responseState);
         // let i = 0;
         if(response.data[1] && response.data[1].length > 0) {
             // while(response[1][i].value == null) {
             //     i++;
             // }
-            const item = response.data[1][0];
-            setGraphHeading({
-                latestValue: item.value,
-                indicator: item.indicator.value,
-                country: item.country.value,
-                date: item.date,
-            });
+            // const item = response.data[1][0];
+            // setGraphHeading({
+            //     latestValue: item.value,
+            //     indicator: item.indicator.value,
+            //     country: item.country.value,
+            //     date: item.date,
+            // });
         
-
-        response.data[1].map(item => {
+        console.log("LENGTH OF RESPONSE RECEIVED: ", response.data[1].length)
+        response.data[1].map((item) => {
             if(item.value !== null) {
-                if(datas[item.country.value] == null) {
-                    datas[item.country.value] = [];
+                if(datas[item.country.id] == null) {
+                    datas[item.country.id] = [];
                 }
-                datas[item.country.value].unshift({x: item.date, y: item.value});
+                datas[item.country.id].push({x: item.date, y: item.value});
             // values.unshift({x: item.date, y: item.value});
             // labels.unshift(item.date);
             }
@@ -170,8 +177,8 @@ export default function GraphContent(props) {
  
 
 
-        setGraphData(values);
-        setGraphLabels(labels);
+        // setGraphData(values);
+        // setGraphLabels(labels);
 
         if(response.data[1].length > 0) {
             // while(response[1][i].value == null) {
@@ -188,6 +195,7 @@ export default function GraphContent(props) {
                 date: item.date,
             });
         }
+        console.log("Dict keys", Object.keys(datas));
         setLoading(false);
     }
       }, []);
@@ -202,7 +210,7 @@ export default function GraphContent(props) {
                 // <Container maxWidth="lg" className={classes.container}>
                 <div className={classes.container}>
                     {!loading &&    
-                        <GraphContainer labels={graphLabels} data={graphData}/>
+                        <GraphContainer country={props.country} parsedURL={props.parsedURL} data={graphData}/>
                     }
                </div>
                 // </Container>

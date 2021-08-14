@@ -8,6 +8,8 @@ import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
 import {graphColors} from './constants'
+import {countries, indicators} from './constants'
+
 
 import { useLocation, Router, Route, Switch } from "react-router";
 const queryString = require('query-string');
@@ -158,10 +160,11 @@ export default function GraphContainer(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
-    const [graphData, setGraphData] = React.useState(false);
+    // const [graphData, setGraphData] = React.useState(false);
     const [graphHeading, setGraphHeading] = React.useState(false);
     const location = useLocation();
-
+    const iterableData = Object.entries(props.data.data);
+    console.log("CONTAINER KEYS: ", Object.keys(props.data.data));
 
 
     // useEffect(async () => {
@@ -218,10 +221,12 @@ export default function GraphContainer(props) {
                     // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
 
                     let datasets2 = [];
-                    const countries = Object.entries(props.data.data);
-
-                    Object.entries(props.data.data).forEach((entry, index) => {
-                        const [countryName, countryData] = entry;
+                    // const countries = Object.entries(props.data.data);
+                    console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
+                    props.country.forEach((entry, index) => {
+                        // const [countryName, countryData] = iterableData[index];
+                        const countryName = countries[entry];
+                        const countryData = props.data.data[entry];
                         const ctx = canvas.getContext("2d")
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
                         gradient.addColorStop(0, graphColors[index].background);
@@ -299,17 +304,19 @@ export default function GraphContainer(props) {
 
                     <div className={classes.statsContainer}>
 
-                        {Object.entries(props.data.data).map(item => {
+                        {
+                        props.country.map((entry, index) => {
 
-                            const [countryName, countryData] = item;
+                            const countryName = countries[entry];
+                            const countryData = props.data.data[entry];
 
                             return(
                                 <div> 
-                                    <h1 className={classes.graphSubtitle}>{countryName}</h1>
+                                    <h1 style={{color: graphColors[index].line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
                                     <h1 className={classes.graphTitle}> {
                         
-                                        millify(countryData[countryData.length - 1].y, {
+                                        millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
                                                 })
@@ -347,6 +354,9 @@ export default function GraphContainer(props) {
                                     bottom: 0,
                                 },
                             },
+                            legend: {
+                                display: false
+                             },
                             scales: {
                                 xAxes: [{
                                     drawBorder: false,

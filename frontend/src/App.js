@@ -26,13 +26,6 @@ import { render } from 'react-dom';
 const queryString = require('query-string');
 // const location = useLocation();
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  );
-}
 
 //{arrayFormat: 'separator', arrayFormatSeparator: ';'}
 const parsed = queryString.parse(window.location.pathname);
@@ -47,19 +40,23 @@ const useStyles = makeStyles((theme) => ({
       fontFamily: 'Helvetica Neue, Helvetica, Arial',
       letterSpacing: '-0.03em',
   },
-  title: {
-    fontSize: 23,
+  categoryTitle: {
+    fontSize: 13,
+    textAlign: "left",
+    fontWeight: 500,
+    marginTop: 40,
+    marginBottom: 5,
+    marginLeft: 14,
   },
   listPin: {
-    minWidth: "8px", 
-    height: "24px", 
+    minWidth: "6px", 
+    height: "21px", 
     flexShrink: 0,
 
     marginRight: "16px",
-    marginLeft: "16px",
-    backgroundColor: 'grey', 
-    borderRadius: "4px",
-    listPin: "#E9E9E9",
+    // marginLeft: "16px",
+    borderRadius: "3px",
+    backgroundColor: "#EBEBEB",
   }
 }));
 
@@ -77,8 +74,10 @@ function putStringIntoArr() {
 function App() {
   const classes = useStyles();
   const history = createBrowserHistory();
-  const [country, setCountry] = React.useState(parsed.countries || "RUS");
-  const [indicator, setIndicator] = React.useState(parsed.indicators || "SP.DYN.TFRT.IN");
+  const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["RU"]);
+  const [countryArr, setCountryArr] = React.useState(["RU", "US"]);
+
+  const [indicator, setIndicator] = React.useState(`${parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]}`);
 
 
   // useEffect(() => {
@@ -87,6 +86,7 @@ function App() {
 
 
   const navigateTo = (country, indicator) => {
+    console.log(`&graph=true&countries=${country}&indicators=${indicator}`)
     return `&graph=true&countries=${country}&indicators=${indicator}`;
     // return `/v2/country/${countries[country]}/indicator/${indicators[indicator]}`;
   }
@@ -94,8 +94,13 @@ function App() {
   const handleCountrySelection = (event, selected) => {
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
     // alert(country)
-    history.push(navigateTo(selected, indicator));
+    const stringnifiedURL = selected.join(';');
+    console.log("SELECTED COUNTRY: ", selected);
+    console.log(stringnifiedURL)
+    setCountryArr(selected);
     setCountry(selected);
+    history.push(navigateTo(stringnifiedURL, indicator));
+
 
     
   };
@@ -103,7 +108,12 @@ function App() {
   const handleIndicatorSelection = (event, selected) => {
     // alert(indicator)
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
-    history.push(navigateTo(country, selected)); 
+    // const stringnifiedURL = queryString.stringify({indicators: selected}, {arrayFormat: 'separator', arrayFormatSeparator: ';'})
+    history.push(navigateTo(country, selected));
+
+    // history.push(navigateTo(country, selected)); 
+    console.log("SELECTED INDICATOR: ", selected);
+    // console.log(queryString.stringify({indicators: selected}, {arrayFormat: 'separator', arrayFormatSeparator: ';'}))
     setIndicator(selected);
 
   };
@@ -117,10 +127,13 @@ function App() {
 
     <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
     <Autocomplete
+            multiple
             freeSolo
             id="free-solo-2-demo"
             disableClearable
-            value={countries[country] || "Multiple"}
+            value={country}
+            // value={["RU", "FR"]}
+            // value={countries[country] || "Multiple"}
             onChange={handleCountrySelection}
             // placeholder="Country"
             options={Object.keys(countries).map((option) => option)}
@@ -137,11 +150,12 @@ function App() {
           />
 
     <Autocomplete
+                // multiple
                 freeSolo
                 id="free-solo-3-demo"
                 disableClearable
                 placeholder="Indicator"
-                value={indicators[indicator] || "Multiple"}
+                // value={indicators[indicator] || "Multiple"}
                 onChange={handleIndicatorSelection}
                 options={Object.keys(indicators).map((option) => option)}
                 getOptionLabel={(option) => option}
@@ -157,12 +171,12 @@ function App() {
                 )}
               />
 
-    <Typography variant="h6" className={classes.title}>
-            Indicators
-          </Typography>
+
           <div>
             <List dense={true}>
-            { Array.isArray(tokenizeParsed.countries) && tokenizeParsed.countries.map((countryKey, index) => (
+            <Typography className={classes.categoryTitle}>Countries</Typography>
+
+            { country.map((countryKey, index) => (
 
               
                 <ListItem>
@@ -185,13 +199,40 @@ function App() {
 
             )}
             </List>
+
+            <List dense={true}>
+            <Typography className={classes.categoryTitle}>Indicators</Typography>
+
+            { tokenizeParsed.indicators.split(';').map((indicatorKey, index) => (
+
+              
+                <ListItem>
+                  {/* <ListItemAvatar disablePadding> */}
+                    <div className={classes.listPin}>
+
+                    </div>
+                  {/* </ListItemAvatar> */}
+                  <ListItemText
+                    primary={indicators[indicatorKey]}
+                    secondary={indicatorKey}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="delete">
+                      {/* <DeleteIcon /> */}
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>)
+             
+
+            )}
+            </List>
           </div>
       
       </div>
       <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
       <Router history={history}>
         <Switch>
-          <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} country={country} indicator={indicator} />}/>
+          <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} parsedURL={parsed} country={country} indicator={indicator} />}/>
         </Switch>
       </Router>
       </div>
