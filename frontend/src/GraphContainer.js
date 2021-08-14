@@ -166,53 +166,6 @@ export default function GraphContainer(props) {
     const iterableData = Object.entries(props.data.data);
     console.log("CONTAINER KEYS: ", Object.keys(props.data.data));
 
-
-    // useEffect(async () => {
-    //     // alert(location.pathname);
-    //     let url;
-    //     if(location.pathname.length < 10) {
-    //         url = "/v2/country/RUS/indicator/SP.POP.TOTL";
-    //     } else {
-    //         url = location.pathname;
-    //         // alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
-
-    //     }
-    //     const response = await axios(
-    //       `https://api.worldbank.org${url}?format=json&mrnev=120`,
-    //     );
-     
-    //     const labels = [];
-    //     const values = [];
-    //     const objects = {};
-
-    //     // let i = 0;
-    //     if(response.data[1].length > 0) {
-    //         // while(response[1][i].value == null) {
-    //         //     i++;
-    //         // }
-    //         const item = response.data[1][0];
-    //         setGraphHeading({
-    //             latestValue: item.value,
-    //             indicator: item.indicator.value,
-    //             country: item.country.value,
-    //             date: item.date,
-    //         });
-    //     }
-
-    //     response.data[1].map(item => {
-    //         if(item.value !== null) {
-
-    //         values.unshift({x: item.date, y: item.value});
-    //         labels.unshift(item.date);
-    //         }
-    //     });
-
-
-    //     console.log(values);
-    //     console.log(labels);        
-    //     console.log(response.data);
-    //     setLoading(false);
-
             const data = canvas => {
 
 
@@ -246,21 +199,6 @@ export default function GraphContainer(props) {
                             pointRadius: 0,
                         });
                       });
-
-                    // for(const [countryName, countryData] of countries) {
-                    //     console.log(countryName);
-                    //     console.log(countryData);
-                    //     datasets2.push({
-                    //         label: countryName,
-                    //         data: countryData,
-                    //         tension: 0.15, 
-                    //         showLine: true,
-                    //         backgroundColor: "rgba(50, 173, 252, 0.2)",
-                    //         borderColor: "#32ADFC",
-                    //         borderWidth: 6,
-                    //         pointRadius: 0,
-                    //     });
-                    // }
 
                     console.log(datasets2);
         
@@ -327,18 +265,7 @@ export default function GraphContainer(props) {
                             )
                         })}
 
-                    </div>
-
-                    {/* {props.data.latestValue && <h1 className={classes.graphTitle}> {
-                    
-                        millify(props.data.latestValue, {
-                                precision: 2,
-                                lowercase: false,
-                                })
-                        }
-                    </h1>} */}
-
-                    
+                    </div>                    
                     
                      <Scatter
                         className={classes.graph}
@@ -419,7 +346,6 @@ export default function GraphContainer(props) {
                 </div>
                    
 
-                {/* </Container> */}
             </main>
         </div>
     );

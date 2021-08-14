@@ -113,24 +113,12 @@ export default function GraphContent(props) {
 
 
     useEffect(async () => {
-        // alert(location.pathname);
-        // setLoading(true);
-        // setGraphData(null);
-
         let url;
-        // if(props.country === undefined) {
-        //     url = location.pathname;
-        // } else {
+
             const countryString = props.country.join(';');
             console.log("REQUEST COUNTRIES: ", props.country.join(';'));
             url = `v2/country/${countryString}/indicator/${props.indicator}`;
-            // alert(`https://api.worldbank.org${url}?format=json&mrnev=120`);
 
-        // }
-        // alert(`https://api.worldbank.org/v2/country/${countries[props.country]}/indicator/${indicators[props.indicator]}?format=json&mrnev=120`)
-        // const response = await axios(
-        //     `https://api.worldbank.org/v2/country/${countries[props.country]}/indicator/${indicators[props.indicator]}?format=json&mrnev=120`
-        // );
 
         const response = await axios(
           `https://api.worldbank.org/${url}?format=json&per_page=520`,
@@ -142,21 +130,8 @@ export default function GraphContent(props) {
         console.log("REQUEST", `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`)
         console.log("RESPONSE", response.data[1]);
 
-        // setResponseState[response.data[1]];
-        // console.log("Response State: ", responseState);
-        // let i = 0;
         if(response.data[1] && response.data[1].length > 0) {
-            // while(response[1][i].value == null) {
-            //     i++;
-            // }
-            // const item = response.data[1][0];
-            // setGraphHeading({
-            //     latestValue: item.value,
-            //     indicator: item.indicator.value,
-            //     country: item.country.value,
-            //     date: item.date,
-            // });
-        
+     
         console.log("LENGTH OF RESPONSE RECEIVED: ", response.data[1].length)
         response.data[1].map((item) => {
             if(item.value !== null) {
@@ -164,26 +139,13 @@ export default function GraphContent(props) {
                     datas[item.country.id] = [];
                 }
                 datas[item.country.id].push({x: item.date, y: item.value});
-            // values.unshift({x: item.date, y: item.value});
-            // labels.unshift(item.date);
+
             }
         });
         
 
 
-        // console.log(values);
-        // console.log(labels);        
-        // console.log(response.data);
- 
-
-
-        // setGraphData(values);
-        // setGraphLabels(labels);
-
         if(response.data[1].length > 0) {
-            // while(response[1][i].value == null) {
-            //     i++;
-            // }
             const item = response.data[1][0];
 
             setGraphData({
@@ -207,12 +169,10 @@ export default function GraphContent(props) {
     return (
             // <CssBaseline />
 
-                // <Container maxWidth="lg" className={classes.container}>
                 <div className={classes.container}>
                     {!loading &&    
                         <GraphContainer country={props.country} parsedURL={props.parsedURL} data={graphData}/>
                     }
                </div>
-                // </Container>
     );
 }
