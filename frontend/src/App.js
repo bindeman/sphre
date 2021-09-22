@@ -99,17 +99,19 @@ function App() {
     console.log(stringnifiedURL)
     setCountryArr(selected);
     setCountry(selected);
-    history.push(navigateTo(stringnifiedURL, indicator));
+    history.push(navigateTo(stringnifiedURL, indicator.join(';')));
 
-
-    
   };
 
   const handleIndicatorSelection = (event, selected) => {
     // alert(indicator)
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
     // const stringnifiedURL = queryString.stringify({indicators: selected}, {arrayFormat: 'separator', arrayFormatSeparator: ';'})
-    history.push(navigateTo(country, selected));
+    const stringnifiedURL = selected.join(';');
+    console.log("SELECTED Indicator: ", selected);
+    console.log(stringnifiedURL)
+    setIndicator(selected);
+    history.push(navigateTo(country.join(';'), stringnifiedURL));
 
     // history.push(navigateTo(country, selected)); 
     console.log("SELECTED INDICATOR: ", selected);
@@ -151,6 +153,7 @@ function App() {
 
     <Autocomplete
                 // multiple
+                multiple
                 freeSolo
                 id="free-solo-3-demo"
                 disableClearable
@@ -203,7 +206,7 @@ function App() {
             <List dense={true}>
             <Typography className={classes.categoryTitle}>Indicators</Typography>
 
-            { tokenizeParsed.indicators.split(';').map((indicatorKey, index) => (
+            { tokenizeParsed.indicators && tokenizeParsed.indicators.split(';').map((indicatorKey, index) => (
 
               
                 <ListItem>

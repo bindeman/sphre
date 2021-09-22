@@ -104,7 +104,7 @@ export default function GraphContent(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
-    const [graphData, setGraphData] = React.useState(null);
+    const [graphData, setGraphData] = React.useState([]);
     const [graphLabels, setGraphLabels] = React.useState(false);
     const [responseState, setResponseState] = React.useState(null);
 
@@ -113,9 +113,10 @@ export default function GraphContent(props) {
 
 
     useEffect(async () => {
-        let url;
+            let url;
 
             const countryString = props.country.join(';');
+            // const indicatorString = props.indicator.join(';');
             console.log("REQUEST COUNTRIES: ", props.country.join(';'));
             url = `v2/country/${countryString}/indicator/${props.indicator}`;
 
@@ -148,14 +149,15 @@ export default function GraphContent(props) {
         if(response.data[1].length > 0) {
             const item = response.data[1][0];
 
-            setGraphData({
+            setGraphData(
+                [...graphData, {
                 data: datas,
                 labels: labels,
                 latestValue: item.value,
                 indicator: item.indicator.value,
                 country: item.country.value,
                 date: item.date,
-            });
+            }]);
         }
         console.log("Dict keys", Object.keys(datas));
         setLoading(false);
@@ -170,8 +172,9 @@ export default function GraphContent(props) {
             // <CssBaseline />
 
                 <div className={classes.container}>
-                    {!loading &&    
+                    {!loading && graphData !== [] && 
                         <GraphContainer country={props.country} parsedURL={props.parsedURL} data={graphData}/>
+                        
                     }
                </div>
     );

@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
     },
     graph: {
         width: "100%",
-        maxHeight: '100vh',
     },
     statsContainer: {
         display: 'flex',
@@ -46,8 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
     graphContainer: {
         display: 'block',
-        margin: 'auto',
-
+        margin: 'auto'
     },
     graphImage: {
         maxWidth: '100px',
@@ -163,6 +161,7 @@ export default function GraphContainer(props) {
     // const [graphData, setGraphData] = React.useState(false);
     const [graphHeading, setGraphHeading] = React.useState(false);
     const location = useLocation();
+    console.log("DATA THAT I RECEIVED IN CONTAINER", props.data.data);
     const iterableData = Object.entries(props.data.data);
     console.log("CONTAINER KEYS: ", Object.keys(props.data.data));
 
@@ -175,7 +174,7 @@ export default function GraphContainer(props) {
 
                     let datasets2 = [];
                     // const countries = Object.entries(props.data.data);
-                    console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
+                    // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
                     props.country.forEach((entry, index) => {
                         // const [countryName, countryData] = iterableData[index];
                         const countryName = countries[entry];
@@ -252,7 +251,7 @@ export default function GraphContainer(props) {
                                 <div> 
                                     <h1 style={{color: graphColors[index].line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
-                                    <h1 className={classes.graphTitle}> {
+                                    {/* <h1 className={classes.graphTitle}> {
                         
                                         millify(countryData[0].y, {
                                                 precision: 2,
@@ -260,7 +259,7 @@ export default function GraphContainer(props) {
                                                 })
 
                                     }
-                                    </h1>
+                                    </h1> */}
                                 </div>
                             )
                         })}
