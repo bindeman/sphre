@@ -99,7 +99,8 @@ function App() {
     console.log(stringnifiedURL)
     setCountryArr(selected);
     setCountry(selected);
-    history.push(navigateTo(stringnifiedURL, indicator.join(';')));
+    const indicatorString = indicator.join(';');
+    history.push(navigateTo(stringnifiedURL, indicatorString));
 
   };
 

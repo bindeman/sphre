@@ -104,9 +104,11 @@ export default function GraphContent(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
-    const [graphData, setGraphData] = React.useState([]);
+    const [graphData, setGraphData] = React.useState(null);
     const [graphLabels, setGraphLabels] = React.useState(false);
     const [responseState, setResponseState] = React.useState(null);
+    // setTheArray(prevArray => [...prevArray, ...newValue])
+
 
     const location = useLocation();
 
@@ -148,18 +150,20 @@ export default function GraphContent(props) {
 
         if(response.data[1].length > 0) {
             const item = response.data[1][0];
-
-            setGraphData(
-                [...graphData, {
+            console.log("setting graph data", datas);
+            setGraphData({                
                 data: datas,
                 labels: labels,
                 latestValue: item.value,
                 indicator: item.indicator.value,
                 country: item.country.value,
                 date: item.date,
-            }]);
+            });
         }
         console.log("Dict keys", Object.keys(datas));
+        // console.log("state", Object.keys(graphData));
+        // console.log("STUFF OF KEYS", graphData);
+
         setLoading(false);
     }
       }, []);

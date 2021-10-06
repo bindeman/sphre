@@ -251,7 +251,7 @@ export default function GraphContainer(props) {
                                 <div> 
                                     <h1 style={{color: graphColors[index].line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
-                                    {/* <h1 className={classes.graphTitle}> {
+                                    <h1 className={classes.graphTitle}> {
                         
                                         millify(countryData[0].y, {
                                                 precision: 2,
@@ -259,7 +259,7 @@ export default function GraphContainer(props) {
                                                 })
 
                                     }
-                                    </h1> */}
+                                    </h1>
                                 </div>
                             )
                         })}
