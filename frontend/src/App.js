@@ -84,9 +84,7 @@ function App() {
   const classes = useStyles();
   const history = createBrowserHistory();
   const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["RU"]);
-  const [countryArr, setCountryArr] = React.useState(["RU", "US"]);
-
-  const [indicator, setIndicator] = React.useState(`${parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]}`);
+  const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
   const [disableAddingCountries, setDisableAddingCountries] = React.useState(false);
 
 
@@ -102,13 +100,9 @@ function App() {
   }
 
   const handleCountrySelection = (event, selected) => {
-    // <Redirect to={queryConstructor(selectedCountry, "Population")} />
-    // alert(country)
     const stringnifiedURL = selected.join(';');
 
-    console.log("SELECTED COUNTRY: ", selected);
-    console.log(stringnifiedURL)
-    setCountryArr(selected);
+    // setCountryArr(selected);
     setCountry(selected);
     const indicatorString = indicator.join(';');
     history.push(navigateTo(stringnifiedURL, indicatorString));
@@ -123,19 +117,11 @@ function App() {
   };
 
   const handleIndicatorSelection = (event, selected) => {
-    // alert(indicator)
-    // <Redirect to={queryConstructor(selectedCountry, "Population")} />
-    // const stringnifiedURL = queryString.stringify({indicators: selected}, {arrayFormat: 'separator', arrayFormatSeparator: ';'})
     const stringnifiedURL = selected.join(';');
-    console.log("SELECTED Indicator: ", selected);
-    console.log(stringnifiedURL)
-    setIndicator(selected);
-    history.push(navigateTo(country.join(';'), stringnifiedURL));
 
-    // history.push(navigateTo(country, selected)); 
-    console.log("SELECTED INDICATOR: ", selected);
-    // console.log(queryString.stringify({indicators: selected}, {arrayFormat: 'separator', arrayFormatSeparator: ';'}))
     setIndicator(selected);
+    const countryString = country.join(';');
+    history.push(navigateTo(countryString, stringnifiedURL));
 
   };
 
@@ -190,6 +176,7 @@ function App() {
                 freeSolo
                 id="free-solo-3-demo"
                 disableClearable
+                value={indicator}
                 placeholder="Indicator"
                 // value={indicators[indicator] || "Multiple"}
                 onChange={handleIndicatorSelection}
@@ -214,7 +201,7 @@ function App() {
 
             { country.map((countryKey, index) => (
 
-              
+
                 <ListItem>
                   {/* <ListItemAvatar disablePadding> */}
                     <div className={classes.listPin} style={{backgroundColor: graphColors[index].line}}>
@@ -231,17 +218,18 @@ function App() {
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>)
-             
+
 
             )}
             </List>
 
+
             <List dense={true}>
             <Typography className={classes.categoryTitle}>Indicators</Typography>
 
-            { tokenizeParsed.indicators && tokenizeParsed.indicators.split(';').map((indicatorKey, index) => (
+            { indicator.map((indicatorKey, index) => (
 
-              
+
                 <ListItem>
                   {/* <ListItemAvatar disablePadding> */}
                     <div className={classes.listPin}>
@@ -258,7 +246,7 @@ function App() {
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>)
-             
+
 
             )}
             </List>

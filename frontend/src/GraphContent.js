@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect} from 'react';
 
 import clsx from 'clsx';
 import GraphContainer from "./GraphContainer";
-import millify from "millify";
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
-import {Scatter} from 'react-chartjs-2';
+import {makeStyles} from '@material-ui/core/styles';
 import axios from "axios";
-import {countries, indicators} from './constants'
-import { useLocation, Router, Route, Switch } from "react-router";
-
+import worldBankService from "./services/worldBankService";
+import {countries, indicators} from "./constants";
 
 
 const drawerWidth = 240;
@@ -48,13 +43,11 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '25px',
         color: '#B8B8B8',
         marginTop: '0px',
-
-
     },
     graphCategory: {
         fontWeight: 500,
         textAlign: 'left',
-        fontSize: '20px', 
+        fontSize: '20px',
     },
     drawerPaper: {
         position: 'relative',
@@ -84,11 +77,8 @@ const useStyles = makeStyles((theme) => ({
     },
     container: {
         margin: theme.spacing(5),
-        // maxHeight: '80vh',
-        // paddingBottom: theme.spacing(4),
     },
     paper: {
-        // padding: theme.spacing(2),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
@@ -99,83 +89,49 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
 export default function GraphContent(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
-    const [graphData, setGraphData] = React.useState(null);
+    const [graphData, setGraphData] = React.useState({});
+
     const [responseState, setResponseState] = React.useState(null);
-    // setTheArray(prevArray => [...prevArray, ...newValue])
-
-
-    const location = useLocation();
-
-
 
     useEffect(async () => {
-            let url;
 
-            const countryString = props.country.join(';');
-            // const indicatorString = props.indicator.join(';');
-            console.log("REQUEST COUNTRIES: ", props.country.join(';'));
-            url = `v2/country/${countryString}/indicator/${props.indicator}`;
+        const dataPoints = {};
 
-
-        const response = await axios(
-          `https://api.worldbank.org/${url}?format=json&per_page=520`,
-        );
-     
-        const datas = {};
-        console.log("REQUEST", `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`)
-        console.log("RESPONSE", response.data[1]);
-
-        if(response.data[1] && response.data[1].length > 0) {
-     
-        console.log("LENGTH OF RESPONSE RECEIVED: ", response.data[1].length)
-        response.data[1].map((item) => {
-            if(item.value !== null) {
-                if(datas[item.country.id] == null) {
-                    datas[item.country.id] = [];
-                }
-                datas[item.country.id].push({x: item.date, y: item.value});
-
-            }
-        });
-        
-
-
-        if(response.data[1].length > 0) {
-            const item = response.data[1][0];
-            console.log("setting graph data", datas);
-            setGraphData({                
-                data: datas,
-                latestValue: item.value,
-                indicator: item.indicator.value,
-                country: item.country.value,
-                date: item.date,
+        let promises = worldBankService.getCountriesAndIndicators(props.country, props.indicator, dataPoints)
+        Promise.all(promises)
+            .then((responses) => {
+                console.log("RECEIVED ON MY END HERE");
+                console.log("DP BRUH", dataPoints);
+                setGraphData(dataPoints)
+                setLoading(false)
+            })
+            .catch((err) => {
+                console.log("ERROR receiving one", err)
             });
-        }
-        console.log("Dict keys", Object.keys(datas));
-        // console.log("state", Object.keys(graphData));
-        // console.log("STUFF OF KEYS", graphData);
-
-        setLoading(false);
-    }
-      }, []);
-
-
+            // .catch(error => { //
+            //     alert("ERROR RECEIVING DATA", error);
+            //     console.log(error)
+            // })
+    }, []);
 
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
-            // <CssBaseline />
+        <div className={classes.container}>
+            {!loading &&
+                Object.entries(graphData).map(([indicatorID, indicatorData]) => {
+                    return (
+                        <GraphContainer country={props.country} parsedURL={props.parsedURL} data={indicatorData}
+                                        indicator={indicators[indicatorID]}
+                        />)
 
-                <div className={classes.container}>
-                    {!loading && graphData !== [] && 
-                        <GraphContainer country={props.country} parsedURL={props.parsedURL} data={graphData}/>
-                        
-                    }
-               </div>
+            })
+
+            }
+        </div>
     );
 }

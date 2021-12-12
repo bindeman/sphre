@@ -19,11 +19,13 @@ const queryString = require('query-string');
 
 const drawerWidth = 240;
 
+
 const useStyles = makeStyles((theme) => ({
     root: {
         // display: 'flex',
         fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
+        marginTop: 25,
 
     },
     graph: {
@@ -39,13 +41,13 @@ const useStyles = makeStyles((theme) => ({
             columnGap: 30,
 
         },
-        marginBottom: 30,
-        marginTop: 20,
 
     },
     graphContainer: {
         display: 'block',
-        margin: 'auto'
+        margin: 'auto',
+        marginTop: 30,
+        marginBottom: 30,
     },
     graphImage: {
         maxWidth: '100px',
@@ -161,9 +163,9 @@ export default function GraphContainer(props) {
     // const [graphData, setGraphData] = React.useState(false);
     const [graphHeading, setGraphHeading] = React.useState(false);
     const location = useLocation();
-    console.log("DATA THAT I RECEIVED IN CONTAINER", props.data.data);
-    const iterableData = Object.entries(props.data.data);
-    console.log("CONTAINER KEYS: ", Object.keys(props.data.data));
+    console.log("DATA THAT I RECEIVED IN CONTAINER", props.data);
+    const iterableData = Object.entries(props.data);
+    console.log("CONTAINER KEYS: ", Object.keys(props.data));
 
             const data = canvas => {
 
@@ -173,12 +175,12 @@ export default function GraphContainer(props) {
                     // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
 
                     let datasets2 = [];
-                    // const countries = Object.entries(props.data.data);
+                    // const countries = Object.entries(props.data);
                     // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
                     props.country.forEach((entry, index) => {
                         // const [countryName, countryData] = iterableData[index];
                         const countryName = countries[entry];
-                        const countryData = props.data.data[entry];
+                        const countryData = props.data[entry];
                         const ctx = canvas.getContext("2d")
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
                         gradient.addColorStop(0, graphColors[index].background);
@@ -235,7 +237,7 @@ export default function GraphContainer(props) {
                     <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
                 </div> */}
                 <div className={classes.graphContainer}>
-                <h1 className={classes.graphIndicator}>{props.data.indicator}</h1>
+                <h1 className={classes.graphIndicator}>{props.indicator}</h1>
 
                     {/* <h1 className={classes.graphSubtitle}>{props.data.country}</h1> */}
 
@@ -245,7 +247,7 @@ export default function GraphContainer(props) {
                         props.country.map((entry, index) => {
 
                             const countryName = countries[entry];
-                            const countryData = props.data.data[entry];
+                            const countryData = props.data[entry];
 
                             return(
                                 <div> 

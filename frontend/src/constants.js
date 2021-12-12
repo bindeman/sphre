@@ -24,6 +24,8 @@ export const oldCountries = {
 //     "GDP": "NY.GDP.MKTP.CD"
 //   }
 
+export const WB_API_LIMIT = 520;
+
 export const indicators = {
     "SP.DYN.TFRT.IN": "Fertility Rate",
     "SP.POP.TOTL": "Population",
