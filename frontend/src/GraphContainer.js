@@ -7,7 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
-import {graphColors} from './constants'
+import {getGraphColor, graphColors} from './constants'
 import {countries, indicators} from './constants'
 
 
@@ -182,8 +182,8 @@ function GraphContainer(props) {
                         const countryData = props.data[entry];
                         const ctx = canvas.getContext("2d")
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, graphColors[index].background);
-                        gradient.addColorStop(1, graphColors[index].clear);
+                        gradient.addColorStop(0, getGraphColor(index).background);
+                        gradient.addColorStop(1, getGraphColor(index).clear);
 
                         
                         console.log(countryName);
@@ -194,7 +194,7 @@ function GraphContainer(props) {
                             tension: 0.15, 
                             showLine: true,
                             backgroundColor: gradient,
-                            borderColor: graphColors[index].line,
+                            borderColor: getGraphColor(index).line,
                             borderWidth: 6,
                             pointRadius: 0,
                         });
@@ -252,14 +252,14 @@ function GraphContainer(props) {
 
                             return(
                                 <div> 
-                                    <h1 style={{color: graphColors[index].line}} className={classes.graphSubtitle}>{countryName}</h1>
+                                    <h1 style={{color: getGraphColor(index).line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
                                     <h1 className={classes.graphTitle}> {
 
-                                        countryData[0] && millify(countryData[0].y, {
+                                        countryData[0] ? millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
-                                                })
+                                                }) : "--"
 
                                     }
                                     </h1>

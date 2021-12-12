@@ -4,10 +4,10 @@ import React, { useEffect } from "react";
 import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} from "react-router-dom";
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
-import {countries, indicators} from './constants'
+import {countries, getGraphColor, indicators} from './constants'
 import { makeStyles } from '@material-ui/core/styles';
 import {graphColors} from './constants'
-
+import RemoveCircleOutlinedIcon from '@mui/icons-material/RemoveCircleOutlined';
 
 
 
@@ -27,6 +27,7 @@ import {
   Box
 } from '@material-ui/core'
 import { render } from 'react-dom';
+import worldBankService from "./services/worldBankService";
 // import IconButton from 'material-ui/core/IconButton';
 // import FolderIcon from 'material-ui/icons/FolderIcon';
 // import DeleteIcon from 'material-ui/icons/DeleteIcon';
@@ -66,7 +67,18 @@ const useStyles = makeStyles((theme) => ({
     // marginLeft: "16px",
     borderRadius: "3px",
     backgroundColor: "#EBEBEB",
-  }
+  },
+  iconColor: {
+    '&': {
+      transition: '0.25s',
+      color: '#A6A6A6',
+    },
+    '&:hover': {
+      transition: '0.25s',
+      color: '#868686',
+    },
+  },
+
 }));
 
 function putStringIntoArr() {
@@ -86,11 +98,27 @@ function App() {
   const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["RU"]);
   const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
   const [disableAddingCountries, setDisableAddingCountries] = React.useState(false);
+  const [graphData, setGraphData] = React.useState({});
+  const dataPoints = {};
 
 
   // useEffect(() => {
   //   putStringIntoArr();
   // });
+
+  const getData = () => {
+    console.log("BEFORE DP", dataPoints);
+    let promises = worldBankService.getCountriesAndIndicatorsOptimized(country, indicator, dataPoints)
+    Promise.all(promises)
+        .then((responses) => {
+          console.log("AFTER DP", dataPoints);
+          setGraphData(dataPoints)
+          // setLoading(false)
+        })
+        .catch((err) => {
+          console.log("ERROR receiving one", err)
+        });
+  }
 
 
   const navigateTo = (country, indicator) => {
@@ -104,6 +132,8 @@ function App() {
 
     // setCountryArr(selected);
     setCountry(selected);
+    getData();
+
     const indicatorString = indicator.join(';');
     history.push(navigateTo(stringnifiedURL, indicatorString));
 
@@ -120,6 +150,8 @@ function App() {
     const stringnifiedURL = selected.join(';');
 
     setIndicator(selected);
+    getData();
+
     const countryString = country.join(';');
     history.push(navigateTo(countryString, stringnifiedURL));
 
@@ -146,7 +178,7 @@ function App() {
             // placeholder="Country"
             options={Object.keys(countries).map((option) => option)}
             renderOption={(option) =>
-                <ListItem>
+                <ListItem dense={true}>
                   <ListItemAvatar>
                     <img
                       loading="lazy"
@@ -156,7 +188,10 @@ function App() {
                       alt=""
                   />
                   </ListItemAvatar>
-                  <ListItemText noWrap>{countries[option]} </ListItemText>
+                  <ListItemText noWrap
+                    primary={countries[option]}
+                    secondary={option}
+                  />
                 </ListItem>
             }
             renderInput={(params) => (
@@ -182,7 +217,14 @@ function App() {
                 onChange={handleIndicatorSelection}
                 options={Object.keys(indicators).map((option) => option)}
                 getOptionLabel={(option) => indicators[option]}
-                renderOption={(option) => <Typography noWrap>{indicators[option]}</Typography>}
+                renderOption={(option) =>
+                    <ListItem dense={true}>
+                      <ListItemText noWrap
+                                    primary={indicators[option]}
+                                    secondary={option}
+                      />
+                    </ListItem>
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -204,7 +246,7 @@ function App() {
 
                 <ListItem>
                   {/* <ListItemAvatar disablePadding> */}
-                    <div className={classes.listPin} style={{backgroundColor: graphColors[index].line}}>
+                    <div className={classes.listPin} style={{backgroundColor: getGraphColor(index).line}}>
 
                     </div>
                   {/* </ListItemAvatar> */}
@@ -213,9 +255,9 @@ function App() {
                     secondary={countryKey}
                   />
                   <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
-                      {/* <DeleteIcon /> */}
-                    </IconButton>
+                    {/*<IconButton edge="end" aria-label="delete">*/}
+                       <RemoveCircleOutlinedIcon className={classes.iconColor} />
+                    {/*</IconButton>*/}
                   </ListItemSecondaryAction>
                 </ListItem>)
 
@@ -242,7 +284,7 @@ function App() {
                   />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">
-                      {/* <DeleteIcon /> */}
+                      <RemoveCircleOutlinedIcon className={classes.iconColor} />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>)
@@ -256,9 +298,7 @@ function App() {
       <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
       <Router history={history}>
         <Switch>
-          <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} parsedURL={parsed} country={country} indicator={indicator} />}/>
-          <Route path="/:static" component={(props) => <GraphContent {...props} key={window.location.pathname} parsedURL={parsed} country={country} indicator={indicator} />}/>
-
+          <Route path="/:query" component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
         </Switch>
       </Router>
       </div>

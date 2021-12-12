@@ -120,7 +120,7 @@ export default function GraphContent(props) {
             {
                 !loading && Object.entries(graphData).map(([indicatorID, indicatorData]) => {
                     return (
-                        <GraphContainer country={props.country} parsedURL={props.parsedURL} data={indicatorData}
+                        <GraphContainer country={props.country} data={indicatorData}
                                         indicator={indicators[indicatorID]}
                         />)
 
