@@ -105,7 +105,6 @@ export default function GraphContent(props) {
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
     const [graphData, setGraphData] = React.useState(null);
-    const [graphLabels, setGraphLabels] = React.useState(false);
     const [responseState, setResponseState] = React.useState(null);
     // setTheArray(prevArray => [...prevArray, ...newValue])
 
@@ -128,8 +127,6 @@ export default function GraphContent(props) {
         );
      
         const datas = {};
-        const labels = [];
-        const values = [];
         console.log("REQUEST", `https://api.worldbank.org/${url}?format=json&per_page=520&mrnev=250`)
         console.log("RESPONSE", response.data[1]);
 
@@ -153,7 +150,6 @@ export default function GraphContent(props) {
             console.log("setting graph data", datas);
             setGraphData({                
                 data: datas,
-                labels: labels,
                 latestValue: item.value,
                 indicator: item.indicator.value,
                 country: item.country.value,

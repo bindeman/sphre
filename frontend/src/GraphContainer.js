@@ -203,7 +203,7 @@ export default function GraphContainer(props) {
         
                     return {
                         
-                    labels: props.data.labels,
+                    // labels: props.data.labels,
                     datasets: datasets2,
 
                     }
@@ -302,7 +302,6 @@ export default function GraphContainer(props) {
                                         // drawOnChartArea: true,
                                         color: "rgba(0, 0, 0, 0.03)",
                                         drawBorder: false,
-                                        tickMarkLength: false,
                                         display: true,
 
                                     }
@@ -332,7 +331,6 @@ export default function GraphContainer(props) {
                                         // drawOnChartArea: true,
                                         color: "rgba(0, 0, 0, 0.05)",
                                         drawBorder: false,
-                                        tickMarkLength: false,
                                         display: true,
 
                                     },

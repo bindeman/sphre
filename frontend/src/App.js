@@ -16,7 +16,16 @@ import Typography from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 // import List from '@material-ui/core/List'
 // import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import {List, Avatar, ListItem, ListItemSecondaryAction, ListItemAvatar, ListItemText, IconButton} from '@material-ui/core'
+import {
+  List,
+  Avatar,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemAvatar,
+  ListItemText,
+  IconButton,
+  Box
+} from '@material-ui/core'
 import { render } from 'react-dom';
 // import IconButton from 'material-ui/core/IconButton';
 // import FolderIcon from 'material-ui/icons/FolderIcon';
@@ -78,6 +87,7 @@ function App() {
   const [countryArr, setCountryArr] = React.useState(["RU", "US"]);
 
   const [indicator, setIndicator] = React.useState(`${parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]}`);
+  const [disableAddingCountries, setDisableAddingCountries] = React.useState(false);
 
 
   // useEffect(() => {
@@ -95,12 +105,20 @@ function App() {
     // <Redirect to={queryConstructor(selectedCountry, "Population")} />
     // alert(country)
     const stringnifiedURL = selected.join(';');
+
     console.log("SELECTED COUNTRY: ", selected);
     console.log(stringnifiedURL)
     setCountryArr(selected);
     setCountry(selected);
     const indicatorString = indicator.join(';');
     history.push(navigateTo(stringnifiedURL, indicatorString));
+
+    //disable adding new countries due to limits on WorldBank API
+    if(selected >= 6 && !disableAddingCountries) {
+      setDisableAddingCountries(true)
+    } else if (selected < 6 && disableAddingCountries) {
+      setDisableAddingCountries(false)
+    }
 
   };
 
@@ -135,12 +153,26 @@ function App() {
             id="free-solo-2-demo"
             disableClearable
             value={country}
-            // value={["RU", "FR"]}
+            getOptionLabel={(option) => countries[option]}
+        // value={["RU", "FR"]}
             // value={countries[country] || "Multiple"}
             onChange={handleCountrySelection}
             // placeholder="Country"
             options={Object.keys(countries).map((option) => option)}
-            renderOption={(option) => <Typography noWrap>{countries[option]}</Typography>}
+            renderOption={(option) =>
+                <ListItem>
+                  <ListItemAvatar>
+                    <img
+                      loading="lazy"
+                      width="30"
+                      // src={`https://flagcdn.com/w20/${option.toLowerCase()}.png`}
+                      src={`https://flagcdn.com/w80/${option.toLowerCase()}.png`}
+                      alt=""
+                  />
+                  </ListItemAvatar>
+                  <ListItemText noWrap>{countries[option]} </ListItemText>
+                </ListItem>
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -162,7 +194,7 @@ function App() {
                 // value={indicators[indicator] || "Multiple"}
                 onChange={handleIndicatorSelection}
                 options={Object.keys(indicators).map((option) => option)}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option) => indicators[option]}
                 renderOption={(option) => <Typography noWrap>{indicators[option]}</Typography>}
                 renderInput={(params) => (
                   <TextField
@@ -237,6 +269,8 @@ function App() {
       <Router history={history}>
         <Switch>
           <Route path="/:query" component={(props) => <GraphContent {...props} key={window.location.pathname} parsedURL={parsed} country={country} indicator={indicator} />}/>
+          <Route path="/:static" component={(props) => <GraphContent {...props} key={window.location.pathname} parsedURL={parsed} country={country} indicator={indicator} />}/>
+
         </Switch>
       </Router>
       </div>
