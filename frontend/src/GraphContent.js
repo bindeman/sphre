@@ -97,11 +97,10 @@ export default function GraphContent(props) {
 
     const [responseState, setResponseState] = React.useState(null);
 
+    const dataPoints = {};
+
     useEffect(async () => {
-
-        const dataPoints = {};
-
-        let promises = worldBankService.getCountriesAndIndicators(props.country, props.indicator, dataPoints)
+        let promises = worldBankService.getCountriesAndIndicatorsOptimized(props.country, props.indicator, dataPoints)
         Promise.all(promises)
             .then((responses) => {
                 console.log("RECEIVED ON MY END HERE");
@@ -112,18 +111,14 @@ export default function GraphContent(props) {
             .catch((err) => {
                 console.log("ERROR receiving one", err)
             });
-            // .catch(error => { //
-            //     alert("ERROR RECEIVING DATA", error);
-            //     console.log(error)
-            // })
     }, []);
 
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
         <div className={classes.container}>
-            {!loading &&
-                Object.entries(graphData).map(([indicatorID, indicatorData]) => {
+            {
+                !loading && Object.entries(graphData).map(([indicatorID, indicatorData]) => {
                     return (
                         <GraphContainer country={props.country} parsedURL={props.parsedURL} data={indicatorData}
                                         indicator={indicators[indicatorID]}

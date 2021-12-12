@@ -46,8 +46,6 @@ const useStyles = makeStyles((theme) => ({
     graphContainer: {
         display: 'block',
         margin: 'auto',
-        marginTop: 30,
-        marginBottom: 30,
     },
     graphImage: {
         maxWidth: '100px',
@@ -156,7 +154,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function GraphContainer(props) {
+function GraphContainer(props) {
+    console.log("RENDERING: ", props.indicator)
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
@@ -226,6 +225,7 @@ export default function GraphContainer(props) {
     const parsed = queryString.parse(location.pathname);
     console.log("QUERY STRING: ", parsed);
 
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -248,14 +248,15 @@ export default function GraphContainer(props) {
 
                             const countryName = countries[entry];
                             const countryData = props.data[entry];
+                            console.log("COUNTRY DATA: ", countryData)
 
                             return(
                                 <div> 
                                     <h1 style={{color: graphColors[index].line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
                                     <h1 className={classes.graphTitle}> {
-                        
-                                        millify(countryData[0].y, {
+
+                                        countryData[0] && millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
                                                 })
@@ -349,3 +350,5 @@ export default function GraphContainer(props) {
         </div>
     );
 }
+
+export default React.memo(GraphContainer);

@@ -2,8 +2,8 @@ import axios from "axios";
 import {WB_API_LIMIT} from "../constants";
 
 const WorldBankService = {
-    getCountryAndIndicator: async function (counntry, indicator, data) {
-        let url = `v2/country/${counntry}/indicator/${indicator}`;
+    getCountryAndIndicator: async function (country, indicator, data) {
+        let url = `v2/country/${country}/indicator/${indicator}`;
 
         const response = await axios(
             `https://api.worldbank.org/${url}?format=json&per_page=${WB_API_LIMIT}`,
@@ -15,29 +15,53 @@ const WorldBankService = {
             const countryID = dataPoints[0].country.id;
             const indicatorID = dataPoints[0].indicator.id;
 
-            if(data[[indicatorID]] == null) {
-                data[[indicatorID]] = {};
-                if (data[indicatorID][countryID] === null) {
-                    data[indicatorID][countryID] = [];
-                    data[indicatorID][countryID].length = dataPoints.length;
+            if(data[[indicator]] === undefined) {
+                data[[indicator]] = {};
+                if (data[indicator][country] === undefined) {
+                    data[indicator][country] = [];
+                    // data[indicator][country].length = dataPoints.length;
                 }
             }
             dataPoints.map((item) => {
                 if (item.value !== null) {
-                    data[indicatorID][countryID].push({x: item.date, y: item.value});
+                    if(data[indicator][country])
+                    data[indicator][country].push({x: item.date, y: item.value});
                 }
             });
         }
 
-        return data;
+        return response;
     },
 
     getCountriesAndIndicators: function (countries, indicators, data) {
-        let errors = [];
-        let newData = {};
         let promises = [];
         for(const indicator of indicators) {
             promises.push(this.getCountriesAndIndicator(countries, indicator, data));
+        }
+
+        Promise.all(promises)
+            .then((responses) => {
+                responses.map((res, index) => {
+                    console.log(index, res);
+                })
+            })
+            .catch((err) => {
+                console.log("ERROR receiving one", err)
+            });
+
+        return promises;
+    },
+
+    getCountriesAndIndicatorsOptimized: function (countries, indicators, data) {
+        let promises = [];
+        for(const indicator of indicators) {
+            if(data[indicator] === undefined) data[indicator] = {};
+            for(const country of countries) {
+                if(data[indicator] === undefined || data[indicator][country] === undefined) {
+                    data[indicator][country] = [];
+                    promises.push(this.getCountryAndIndicator(country, indicator, data));
+                }
+            }
         }
 
         Promise.all(promises)
@@ -79,15 +103,14 @@ const WorldBankService = {
                     data[indicatorID][item.country.id].push({x: item.date, y: item.value});
                 }
             });
-
-            // console.log(data)
         }
 
-        return data;
+        return response;
     },
 
-    removeCountry: function (country, indicator, data) {
-        delete data[country];
+    removeCountry: function (country, indicators, data) {
+        for(const indicator of indicators)
+            delete data[indicator][country];
     },
 
 
