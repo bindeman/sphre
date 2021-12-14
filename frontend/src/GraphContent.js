@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 
 import clsx from 'clsx';
 import GraphContainer from "./GraphContainer";
@@ -6,6 +6,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import axios from "axios";
 import worldBankService from "./services/worldBankService";
 import {countries, indicators} from "./constants";
+import {WorldBankContext} from "./WorldBankContext";
 
 
 const drawerWidth = 240;
@@ -94,33 +95,20 @@ export default function GraphContent(props) {
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
     const [graphData, setGraphData] = React.useState({});
+    const { graphReducerData, dispatch } = useContext(WorldBankContext);
+
 
     const [responseState, setResponseState] = React.useState(null);
 
-    const dataPoints = {};
-
-    useEffect(async () => {
-        let promises = worldBankService.getCountriesAndIndicatorsOptimized(props.country, props.indicator, dataPoints)
-        Promise.all(promises)
-            .then((responses) => {
-                console.log("RECEIVED ON MY END HERE");
-                console.log("DP BRUH", dataPoints);
-                setGraphData(dataPoints)
-                setLoading(false)
-            })
-            .catch((err) => {
-                console.log("ERROR receiving one", err)
-            });
-    }, []);
 
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
         <div className={classes.container}>
             {
-                !loading && Object.entries(graphData).map(([indicatorID, indicatorData]) => {
+                Object.entries(graphReducerData).map(([indicatorID, indicatorData], index) => {
                     return (
-                        <GraphContainer country={props.country} data={indicatorData}
+                        <GraphContainer key={`Chart-${index}`} country={props.country} data={indicatorData}
                                         indicator={indicators[indicatorID]}
                         />)
 

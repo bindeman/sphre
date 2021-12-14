@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import {WorldBankContext} from "./WorldBankContext";
+import AppRouter from "./AppRouter";
 
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <AppRouter />
   </BrowserRouter>,
   document.getElementById('root')
 );

@@ -7,14 +7,12 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
 import axios from "axios";
-import {getGraphColor, graphColors} from './constants'
+import {changeOpacity, getGraphColor, getGraphLineWidth, graphColors} from './constants'
 import {countries, indicators} from './constants'
 
 
 import { useLocation, Router, Route, Switch } from "react-router";
 const queryString = require('query-string');
-
-
 
 
 const drawerWidth = 240;
@@ -155,16 +153,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function GraphContainer(props) {
-    console.log("RENDERING: ", props.indicator)
+    // console.log("RENDERING: ", props.indicator)
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
     // const [graphData, setGraphData] = React.useState(false);
     const [graphHeading, setGraphHeading] = React.useState(false);
-    const location = useLocation();
-    console.log("DATA THAT I RECEIVED IN CONTAINER", props.data);
-    const iterableData = Object.entries(props.data);
-    console.log("CONTAINER KEYS: ", Object.keys(props.data));
+    // const location = useLocation();
+    // console.log("DATA THAT I RECEIVED IN CONTAINER", props.data);
+    // const iterableData = Object.entries(props.data);
+    // console.log("CONTAINER KEYS: ", Object.keys(props.data));
 
             const data = canvas => {
 
@@ -174,20 +172,21 @@ function GraphContainer(props) {
                     // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
 
                     let datasets2 = [];
+                    const numberOfLines = props.country.length
                     // const countries = Object.entries(props.data);
                     // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
-                    props.country.forEach((entry, index) => {
+                    props.country.map((entry, index) => {
                         // const [countryName, countryData] = iterableData[index];
                         const countryName = countries[entry];
                         const countryData = props.data[entry];
                         const ctx = canvas.getContext("2d")
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, getGraphColor(index).background);
+                        gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
                         gradient.addColorStop(1, getGraphColor(index).clear);
 
                         
-                        console.log(countryName);
-                        console.log(countryData);
+                        // console.log(countryName);
+                        // console.log(countryData);
                         datasets2.push({
                             label: countryName,
                             data: countryData,
@@ -195,12 +194,12 @@ function GraphContainer(props) {
                             showLine: true,
                             backgroundColor: gradient,
                             borderColor: getGraphColor(index).line,
-                            borderWidth: 6,
+                            borderWidth: getGraphLineWidth(numberOfLines),
                             pointRadius: 0,
                         });
                       });
 
-                    console.log(datasets2);
+                    // console.log(datasets2);
         
                     return {
                         
@@ -213,17 +212,8 @@ function GraphContainer(props) {
     //     setGraphData(data);
     //   }, []);
 
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-    const parsed = queryString.parse(location.pathname);
-    console.log("QUERY STRING: ", parsed);
+    // const parsed = queryString.parse(location.pathname);
+    // console.log("QUERY STRING: ", parsed);
 
 
     return (
@@ -248,7 +238,7 @@ function GraphContainer(props) {
 
                             const countryName = countries[entry];
                             const countryData = props.data[entry];
-                            console.log("COUNTRY DATA: ", countryData)
+                            // console.log("COUNTRY DATA: ", countryData)
 
                             return(
                                 <div> 
@@ -256,7 +246,7 @@ function GraphContainer(props) {
                                     
                                     <h1 className={classes.graphTitle}> {
 
-                                        countryData[0] ? millify(countryData[0].y, {
+                                        countryData && countryData[0] ? millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
                                                 }) : "--"

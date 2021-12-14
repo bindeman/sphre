@@ -26,6 +26,15 @@ export const oldCountries = {
 
 export const WB_API_LIMIT = 520;
 
+export const GRAPH_LINE_WIDTH_EXTRA_THICK = 7;
+export const GRAPH_LINE_WIDTH_THICK = 6;
+export const GRAPH_LINE_WIDTH_MED = 5;
+export const GRAPH_LINE_WIDTH_THIN = 3;
+export const GRAPH_LINE_WIDTH_EXTRA_THIN = 2;
+export const GRAPH_LINE_WIDTH_ULTRA_THIN = 1.5;
+
+
+
 export const indicators = {
     "SP.DYN.TFRT.IN": "Fertility Rate",
     "SP.POP.TOTL": "Population",
@@ -47,16 +56,32 @@ export const indicators = {
 }
 
 export function getGraphColor(index) {
-  return index >= graphColors.length ? graphColors[graphColors.length - 1] : graphColors[index];
+  return index >= graphColors.length ?
+                  graphColors[graphColors.length - 1] :
+                  graphColors[index];
 
 }
 
+export function getGraphLineWidth(length) {
+  if(length === 1) return GRAPH_LINE_WIDTH_EXTRA_THICK;
+  if(length < 3) return GRAPH_LINE_WIDTH_THICK;
+  if(length < 5) return GRAPH_LINE_WIDTH_MED;
+  if(length < 7) return GRAPH_LINE_WIDTH_THIN;
+  if(length < 9) return GRAPH_LINE_WIDTH_EXTRA_THIN;
+  if(length >= 10) return GRAPH_LINE_WIDTH_ULTRA_THIN;
+
+}
+
+export function changeOpacity(rgb, newOpacity = 0.00) {
+  return `${rgb.substring(0, rgb.length - 5)}${newOpacity})`;
+}
+
 export const graphColors = [
-    {background: "rgba(50, 173, 252, 0.2)", clear: "rgba(50, 173, 252, 0.0)", line: "rgba(50, 173, 252)"},
-    {background: "rgba(245, 166, 35, 0.2)", clear: "rgba(245, 166, 35, 0.0)", line: "rgba(245, 166, 35)"},
-    {background: "rgba(184, 233, 134, 0.2)", clear: "rgba(184, 233, 134, 0.0)", line: "rgba(184, 233, 134)"},
-    {background: "rgba(144, 19, 254, 0.2)", clear: "rgba(144, 19, 254, 0.0)", line: "rgba(144, 19, 254)"},
-    {background: "rgba(155, 155, 155, 0.2)", clear: "rgba(155, 155, 155, 0.0)", line: "rgba(155, 155, 155)"},
+    {background: "rgba(50, 173, 252, 0.20)", clear: "rgba(50, 173, 252, 0.00)", line: "rgba(50, 173, 252)"},
+    {background: "rgba(245, 166, 35, 0.20)", clear: "rgba(245, 166, 35, 0.00)", line: "rgba(245, 166, 35)"},
+    {background: "rgba(184, 233, 134, 0.20)", clear: "rgba(184, 233, 134, 0.00)", line: "rgba(184, 233, 134)"},
+    {background: "rgba(144, 19, 254, 0.20)", clear: "rgba(144, 19, 254, 0.00)", line: "rgba(144, 19, 254)"},
+    {background: "rgba(155, 155, 155, 0.20)", clear: "rgba(155, 155, 155, 0.00)", line: "rgba(155, 155, 155)"},
 ];
 
 export const countries = {
