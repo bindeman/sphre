@@ -8,7 +8,8 @@ import {countries, getGraphColor, indicators} from './constants'
 import { makeStyles } from '@material-ui/core/styles';
 import {graphColors} from './constants'
 import RemoveCircleOutlinedIcon from '@mui/icons-material/RemoveCircleOutlined';
-import Demo from './Selector';
+import CountrySelector from './CountrySelector';
+import IndicatorSelector from './IndicatorSelector';
 
 
 
@@ -152,14 +153,14 @@ function App() {
 
   };
 
-  const handleIndicatorSelection = (event, selected) => {
+  const handleIndicatorSelection = (selected) => {
     const stringnifiedURL = selected.join(';');
 
     setIndicator(selected);
     getData(country, selected);
 
-    const countryString = country.join(';');
-    history.push(navigateTo(countryString, stringnifiedURL));
+    // const countryString = country.join(';');
+    // history.push(navigateTo(countryString, stringnifiedURL));
 
   };
 
@@ -211,40 +212,41 @@ function App() {
     {/*        )}*/}
     {/*      />*/}
 
-        <Demo options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
+        <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
+        <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
 
-        <Autocomplete
-                // multiple
-                multiple
-                id="free-solo-3-demo"
-                disableClearable
-                value={indicator}
-                placeholder="Indicator"
-                renderTags={(tagValue, getTagProps) =>
-                    tagValue.map((option, index) => {})
-                }
-                // value={indicators[indicator] || "Multiple"}
-                onChange={handleIndicatorSelection}
-                options={Object.keys(indicators).map((option) => option)}
-                getOptionLabel={(option) => indicators[option]}
-                renderOption={(option) =>
-                    <ListItem dense={true}>
-                      <ListItemText noWrap
-                                    primary={indicators[option]}
-                                    secondary={option}
-                      />
-                    </ListItem>
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Indicator"
-                    margin="normal"
-                    variant="outlined"
-                    InputProps={{ ...params.InputProps, type: 'search' }}
-                  />
-                )}
-              />
+        {/*<Autocomplete*/}
+        {/*        // multiple*/}
+        {/*        multiple*/}
+        {/*        id="free-solo-3-demo"*/}
+        {/*        disableClearable*/}
+        {/*        value={indicator}*/}
+        {/*        placeholder="Indicator"*/}
+        {/*        renderTags={(tagValue, getTagProps) =>*/}
+        {/*            tagValue.map((option, index) => {})*/}
+        {/*        }*/}
+        {/*        // value={indicators[indicator] || "Multiple"}*/}
+        {/*        onChange={handleIndicatorSelection}*/}
+        {/*        options={Object.keys(indicators).map((option) => option)}*/}
+        {/*        getOptionLabel={(option) => indicators[option]}*/}
+        {/*        renderOption={(option) =>*/}
+        {/*            <ListItem dense={true}>*/}
+        {/*              <ListItemText noWrap*/}
+        {/*                            primary={indicators[option]}*/}
+        {/*                            secondary={option}*/}
+        {/*              />*/}
+        {/*            </ListItem>*/}
+        {/*        }*/}
+        {/*        renderInput={(params) => (*/}
+        {/*          <TextField*/}
+        {/*            {...params}*/}
+        {/*            label="Indicator"*/}
+        {/*            margin="normal"*/}
+        {/*            variant="outlined"*/}
+        {/*            InputProps={{ ...params.InputProps, type: 'search' }}*/}
+        {/*          />*/}
+        {/*        )}*/}
+        {/*      />*/}
 
 
           <div>
@@ -276,32 +278,32 @@ function App() {
             {/*</List>*/}
 
 
-            <List dense={true}>
-            <Typography className={classes.categoryTitle}>Indicators</Typography>
+            {/*<List dense={true}>*/}
+            {/*<Typography className={classes.categoryTitle}>Indicators</Typography>*/}
 
-            { indicator.map((indicatorKey, index) => (
-
-
-                <ListItem>
-                  {/* <ListItemAvatar disablePadding> */}
-                    <div className={classes.listPin}>
-
-                    </div>
-                  {/* </ListItemAvatar> */}
-                  <ListItemText
-                    primary={indicators[indicatorKey]}
-                    secondary={indicatorKey}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
-                      <RemoveCircleOutlinedIcon className={classes.iconColor} />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>)
+            {/*{ indicator.map((indicatorKey, index) => (*/}
 
 
-            )}
-            </List>
+            {/*    <ListItem>*/}
+            {/*      /!* <ListItemAvatar disablePadding> *!/*/}
+            {/*        <div className={classes.listPin}>*/}
+
+            {/*        </div>*/}
+            {/*      /!* </ListItemAvatar> *!/*/}
+            {/*      <ListItemText*/}
+            {/*        primary={indicators[indicatorKey]}*/}
+            {/*        secondary={indicatorKey}*/}
+            {/*      />*/}
+            {/*      <ListItemSecondaryAction>*/}
+            {/*        <IconButton edge="end" aria-label="delete">*/}
+            {/*          <RemoveCircleOutlinedIcon className={classes.iconColor} />*/}
+            {/*        </IconButton>*/}
+            {/*      </ListItemSecondaryAction>*/}
+            {/*    </ListItem>)*/}
+
+
+            {/*)}*/}
+            {/*</List>*/}
           </div>
       
       </div>

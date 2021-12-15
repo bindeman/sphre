@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function GraphContent(props) {
+function GraphContent(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
@@ -118,3 +118,5 @@ export default function GraphContent(props) {
         </div>
     );
 }
+
+export default React.memo(GraphContent);

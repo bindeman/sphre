@@ -137,7 +137,7 @@ const Button = styled(ButtonBase)(({ theme }) => ({
     paddingBottom: 8,
     color: theme.palette.mode === 'light' ? '#586069' : '#8b949e',
     fontWeight: 600,
-    '&:hover,&:focus': {
+    '&:hover': {
         color: theme.palette.mode === 'light' ? '#0366d6' : '#58a6ff',
     },
     '& span': {
@@ -149,7 +149,7 @@ const Button = styled(ButtonBase)(({ theme }) => ({
     },
 }));
 
-export default function GitHubLabel(props) {
+export default function CountrySelector(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [value, setValue] = React.useState(props.selectedOptions);
     const [pendingValue, setPendingValue] = React.useState([]);
