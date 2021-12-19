@@ -1,18 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 import clsx from 'clsx';
 import millify from "millify";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import {Scatter} from 'react-chartjs-2';
+import { ChartData, ChartArea } from 'chart.js';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Interaction,
+    Legend,
+} from 'chart.js';
+
+import 'chart.js/auto';
+import { Scatter } from 'react-chartjs-2';
+
+import {CrosshairPlugin, Interpolate} from 'chartjs-plugin-crosshair';
+
 import axios from "axios";
-import {changeOpacity, getGraphColor, getGraphLineWidth, graphColors} from './constants'
+import {changeOpacity, getGraphColor, getGraphLineWidth, graphColors, graphOptions} from './constants'
 import {countries, indicators} from './constants'
 
 
 import { useLocation, Router, Route, Switch } from "react-router";
-const queryString = require('query-string');
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Tooltip,
+    Legend,
+    CrosshairPlugin
+);
+
+Interaction.modes.interpolate = Interpolate
 
 
 const drawerWidth = 240;
@@ -164,50 +191,55 @@ function GraphContainer(props) {
     // const iterableData = Object.entries(props.data);
     // console.log("CONTAINER KEYS: ", Object.keys(props.data));
 
-            const data = canvas => {
+    const chartRef = useRef(null);
+    const [chartData, setChartData] = useState({
+        datasets: [],
+    });
 
 
-                    // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
-                    // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
-                    // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
+        useEffect(() => {
+            const chart = chartRef.current;
+            let datasets2 = [];
+            const numberOfLines = props.country.length
+            // const countries = Object.entries(props.data);
+            // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
+            props.country.map((entry, index) => {
+                // const [countryName, countryData] = iterableData[index];
+                const countryName = countries[entry];
+                const countryData = props.data[entry];
 
-                    let datasets2 = [];
-                    const numberOfLines = props.country.length
-                    // const countries = Object.entries(props.data);
-                    // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
-                    props.country.map((entry, index) => {
-                        // const [countryName, countryData] = iterableData[index];
-                        const countryName = countries[entry];
-                        const countryData = props.data[entry];
-                        const ctx = canvas.getContext("2d")
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
-                        gradient.addColorStop(1, getGraphColor(index).clear);
+                // const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
+                // gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
+                // gradient.addColorStop(1, getGraphColor(index).clear);
 
-                        
-                        // console.log(countryName);
-                        // console.log(countryData);
-                        datasets2.push({
-                            label: countryName,
-                            data: countryData,
-                            tension: 0.15, 
-                            showLine: true,
-                            backgroundColor: gradient,
-                            borderColor: getGraphColor(index).line,
-                            borderWidth: getGraphLineWidth(numberOfLines),
-                            pointRadius: 0,
-                        });
-                      });
 
-                    // console.log(datasets2);
-        
-                    return {
-                        
-                    // labels: props.data.labels,
-                    datasets: datasets2,
+                // console.log(countryName);
+                // console.log(countryData);
+                datasets2.push({
+                    label: countryName,
+                    data: countryData,
+                    tension: 0,
+                    showLine: true,
+                    borderColor: getGraphColor(index).line,
+                    borderWidth: getGraphLineWidth(numberOfLines),
+                    pointRadius: 2,
+                    fill: false
+                });
+            });
 
-                    }
-                }
+
+            if (chart) {
+                setChartData({
+                    datasets: datasets2
+                });
+            }
+
+            console.log("SETTING CHART", datasets2);
+
+        }, []);
+
+
+
 
     //     setGraphData(data);
     //   }, []);
@@ -261,78 +293,11 @@ function GraphContainer(props) {
                     
                      <Scatter
                         className={classes.graph}
-                        data={data}
-                        options={{ 
-                            maintainAspectRatio: true, 
-                            responsive: true,
-                            layout: {
-                                padding: {
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                },
-                            },
-                            legend: {
-                                display: false
-                             },
-                            scales: {
-                                xAxes: [{
-                                    drawBorder: false,
-                                    ticks: { 
-                                        display: true,
-                                        autoSkip: true,
-                                        padding: 10,
-                                        maxTicksLimit: 12,
-                                        drawOnChartArea: false
-                                        // fontColor: '#C0C0C0'
-
-                                    },
-                                    gridLines: {
-                                        drawTicks: false,
-                                        tickMarkLength: 0,
-                                        maxTicksLimit: 14,
-                                        // drawOnChartArea: true,
-                                        color: "rgba(0, 0, 0, 0.03)",
-                                        drawBorder: false,
-                                        display: true,
-
-                                    }
-                                }],
-                                yAxes: [{
-                                    position: 'right',
-                                    drawBorder: false,
-                                    ticks: { 
-                                        display: true,
-                                        drawOnChartArea: false,
-                                        padding: 10,
-                                        autoSkip: true,
-                                        color: "rgba(0, 0, 0, 0.03)",
-                                        maxTicksLimit: 9,
-                                        // fontColor: '#C0C0C0',
-                                        drawBorder: false,
-                                        callback: function(value, index, values) {
-                                            return millify(value, {
-                                                precision: 2,
-                                                lowercase: false,
-                                                })
-                                        }
-                                     },
-                                    gridLines: {
-                                        drawTicks: false,
-                                        tickMarkLength: 0,
-                                        // drawOnChartArea: true,
-                                        color: "rgba(0, 0, 0, 0.05)",
-                                        drawBorder: false,
-                                        display: true,
-
-                                    },
-                                }],
-                            }
-                        
-                        }}
+                        data={chartData}
+                        ref={chartRef}
+                        options={graphOptions}
                     />
-                    
+
                 </div>
                    
 

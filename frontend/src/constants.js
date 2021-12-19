@@ -6,6 +6,8 @@
 //     "Mexico": "MX",
 //   }
 
+import millify from "millify";
+
 export const oldCountries = {
     "RU": "Russian Federation",
     "US": "United States",
@@ -83,6 +85,116 @@ export const graphColors = [
     {background: "rgba(144, 19, 254, 0.20)", clear: "rgba(144, 19, 254, 0.00)", line: "rgba(144, 19, 254)"},
     {background: "rgba(155, 155, 155, 0.20)", clear: "rgba(155, 155, 155, 0.00)", line: "rgba(155, 155, 155)"},
 ];
+
+
+export const graphOptions = {
+  scales: {
+    x: {
+      type: 'linear',
+    }
+  },
+  plugins: {
+    tooltip: {
+      mode: "interpolate",
+      intersect: false,
+    },
+    crosshair: {
+      line: {
+        color: '#F66',  // crosshair line color
+        width: 3        // crosshair line width
+      },
+      zoom: {
+        enabled: true,                                      // enable zooming
+        zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box
+        zoomboxBorderColor: '#48F',                         // border color of zoom box
+        zoomButtonText: 'Reset Zoom',                       // reset zoom button text
+        zoomButtonClass: 'reset-zoom',                      // reset zoom button class
+      },
+      callbacks: {
+        beforeZoom: () => function(start, end) {                  // called before zoom, return false to prevent zoom
+          return true;
+        },
+        afterZoom: () => function(start, end) {                   // called after zoom
+        }
+      }
+    }
+  }
+
+
+
+}
+
+
+
+export const graphOptionsOld = {
+  maintainAspectRatio: true,
+  responsive: true,
+  layout: {
+    padding: {
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+  },
+  legend: {
+    display: false
+  },
+  scales: {
+    xAxes: [{
+      drawBorder: false,
+      ticks: {
+        display: true,
+        autoSkip: true,
+        padding: 10,
+        maxTicksLimit: 12,
+        drawOnChartArea: false
+        // fontColor: '#C0C0C0'
+
+      },
+      gridLines: {
+        drawTicks: false,
+        tickMarkLength: 0,
+        maxTicksLimit: 14,
+        // drawOnChartArea: true,
+        color: "rgba(0, 0, 0, 0.03)",
+        drawBorder: false,
+        display: true,
+
+      }
+    }],
+    yAxes: [{
+      position: 'right',
+      drawBorder: false,
+      ticks: {
+        display: true,
+        drawOnChartArea: false,
+        padding: 10,
+        autoSkip: true,
+        color: "rgba(0, 0, 0, 0.03)",
+        maxTicksLimit: 9,
+        // fontColor: '#C0C0C0',
+        drawBorder: false,
+        callback: function(value, index, values) {
+          return millify(value, {
+            precision: 2,
+            lowercase: false,
+          })
+        }
+      },
+      gridLines: {
+        drawTicks: false,
+        tickMarkLength: 1,
+        // drawOnChartArea: true,
+        color: "rgba(0, 0, 0, 0.05)",
+        drawBorder: false,
+        display: true,
+
+      },
+    }],
+  }
+
+}
 
 export const countries = {
   "AD": "Andorra",
