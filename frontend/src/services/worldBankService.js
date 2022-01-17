@@ -77,6 +77,32 @@ const WorldBankService = {
         return promises;
     },
 
+    getCountriesAndIndicatorOptimized: function (countries, indicator, data) {
+        let promises = [];
+        console.log("here we are");
+
+        if(data[indicator] === undefined) data[indicator] = {};
+        for(const country of countries) {
+            if(data[indicator] === undefined || data[indicator][country] === undefined) {
+                data[indicator][country] = [];
+                promises.push(this.getCountryAndIndicator(country, indicator, data));
+            }
+        }
+
+
+        Promise.all(promises)
+            .then((responses) => {
+                responses.map((res, index) => {
+                    console.log(index, res);
+                })
+            })
+            .catch((err) => {
+                console.log("ERROR receiving one", err)
+            });
+
+        return promises;
+    },
+
     getCountriesAndIndicator: async function (countries, indicator, data) {
         const countryString = countries.join(';');
         let url = `v2/country/${countryString}/indicator/${indicator}`;

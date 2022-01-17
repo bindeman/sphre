@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 
 import clsx from 'clsx';
 import millify from "millify";
@@ -28,6 +28,9 @@ import {countries, indicators} from './constants'
 
 
 import { useLocation, Router, Route, Switch } from "react-router";
+import {WorldBankContext} from "./WorldBankContext";
+import worldBankService from "./services/worldBankService";
+import LoadingSpinner from "./Spinner";
 
 ChartJS.register(
     CategoryScale,
@@ -42,12 +45,8 @@ ChartJS.register(
 Interaction.modes.interpolate = Interpolate
 
 
-const drawerWidth = 240;
-
-
 const useStyles = makeStyles((theme) => ({
     root: {
-        // display: 'flex',
         fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
         marginTop: 25,
@@ -71,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
     graphContainer: {
         display: 'block',
         margin: 'auto',
+    },
+    parentContainer: {
+        display: 'flex',
     },
     graphImage: {
         maxWidth: '100px',
@@ -120,27 +122,6 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'left',
         fontSize: '20px', 
     },
-    drawerPaper: {
-        position: 'relative',
-        whiteSpace: 'nowrap',
-        width: drawerWidth,
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    drawerPaperClose: {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-            width: theme.spacing(9),
-        },
-    },
-    appBarSpacer: theme.mixins.toolbar,
     content: {
         flexGrow: 1,
         // height: 'fit-content',
@@ -180,72 +161,91 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function GraphContainer(props) {
-    // console.log("RENDERING: ", props.indicator)
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
     const [loading, setLoading] = React.useState(true);
-    // const [graphData, setGraphData] = React.useState(false);
-    const [graphHeading, setGraphHeading] = React.useState(false);
-    // const location = useLocation();
-    // console.log("DATA THAT I RECEIVED IN CONTAINER", props.data);
-    // const iterableData = Object.entries(props.data);
-    // console.log("CONTAINER KEYS: ", Object.keys(props.data));
+
+    let localGraphOptions = graphOptions;
+    const { graphReducerData, dispatch } = useContext(WorldBankContext);
 
     const chartRef = useRef(null);
     const [chartData, setChartData] = useState({
         datasets: [],
     });
 
+    let datasets = [];
 
-        useEffect(() => {
-            const chart = chartRef.current;
-            let datasets2 = [];
-            const numberOfLines = props.country.length
-            // const countries = Object.entries(props.data);
-            // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
-            props.country.map((entry, index) => {
-                // const [countryName, countryData] = iterableData[index];
-                const countryName = countries[entry];
-                const countryData = props.data[entry];
+    function setData() {
+        const chart = chartRef.current;
+        const numberOfLines = props.country.length
+        props.country.map((entry, index) => {
+            // const [countryName, countryData] = iterableData[index];
+            const countryName = countries[entry];
+            const countryData = graphReducerData[props.indicator][entry];
 
-                // const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
-                // gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
-                // gradient.addColorStop(1, getGraphColor(index).clear);
+            // const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
+            // gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
+            // gradient.addColorStop(1, getGraphColor(index).clear);
 
-
-                // console.log(countryName);
-                // console.log(countryData);
-                datasets2.push({
-                    label: countryName,
-                    data: countryData,
-                    tension: 0,
-                    showLine: true,
-                    borderColor: getGraphColor(index).line,
-                    borderWidth: getGraphLineWidth(numberOfLines),
-                    pointRadius: 2,
-                    fill: false
-                });
+            datasets.push({
+                label: countryName,
+                data: countryData,
+                tension: 0,
+                showLine: true,
+                borderColor: getGraphColor(index).line,
+                borderWidth: getGraphLineWidth(numberOfLines),
+                pointRadius: 2,
+                fill: false
             });
 
+            setLoading(false);
+            console.log("DATASETS", datasets)
+        });
 
-            if (chart) {
-                setChartData({
-                    datasets: datasets2
-                });
+
+        if (chart) {
+            setChartData({
+                datasets: datasets
+            });
+        }
+    }
+
+    const dataPoints = graphReducerData;
+
+        useEffect(() => {
+            const getData = (country, indicator) => {
+                setLoading(true);
+
+                let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
+
+                if(promises.length > 0) {
+                    Promise.all(promises)
+                        .then((responses) => {
+                            console.log("AFTER DP", dataPoints);
+                            dispatch({
+                                type: "UPDATE_INDICATOR",
+                                payload: dataPoints[indicator],
+                                indicator: props.indicator
+                            })
+                            localGraphOptions['animation'] = {
+                                duration: 500
+                            }
+                            setData();
+                        })
+                        .catch((err) => {
+                            console.log("ERROR receiving one", err)
+                        });
+                } else {
+                    console.log("NOTHING UPDATED", chartData);
+                    localGraphOptions['animation'] = {
+                        duration: 0
+                    }
+                    setData();
+                }
             }
 
-            console.log("SETTING CHART", datasets2);
+            getData(props.country, props.indicator);
 
         }, []);
-
-
-
-
-    //     setGraphData(data);
-    //   }, []);
-
-    // const parsed = queryString.parse(location.pathname);
-    // console.log("QUERY STRING: ", parsed);
 
 
     return (
@@ -253,27 +253,30 @@ function GraphContainer(props) {
             <CssBaseline />
 
             <main className={classes.content}>
-                {/* <Container maxWidth="lg" className={classes.container}> */}
 
-                {/* <div className={classes.graphImage}>
-                    <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>
-                </div> */}
+                {/*<div className={classes.graphImage}>*/}
+                {/*    <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>*/}
+                {/*</div>*/}
                 <div className={classes.graphContainer}>
-                <h1 className={classes.graphIndicator}>{props.indicator}</h1>
+
+                    <div className={classes.parentContainer}>
+                        <h1 className={classes.graphIndicator}>{indicators[props.indicator]}</h1>
+                        {loading && <div style={{marginLeft: 'auto', order: 2}}><LoadingSpinner /></div>}
+                    </div>
 
                     {/* <h1 className={classes.graphSubtitle}>{props.data.country}</h1> */}
-
                     <div className={classes.statsContainer}>
 
                         {
-                        props.country.map((entry, index) => {
+                        !loading && props.country.map((entry, index) => {
 
                             const countryName = countries[entry];
-                            const countryData = props.data[entry];
+                            console.log("INFOTHERE", graphReducerData[props.indicator] && graphReducerData[props.indicator][entry] );
+                            const countryData = graphReducerData[props.indicator][entry];
                             // console.log("COUNTRY DATA: ", countryData)
 
                             return(
-                                <div> 
+                                <div key={entry}>
                                     <h1 style={{color: getGraphColor(index).line}} className={classes.graphSubtitle}>{countryName}</h1>
                                     
                                     <h1 className={classes.graphTitle}> {
@@ -288,19 +291,17 @@ function GraphContainer(props) {
                                 </div>
                             )
                         })}
+                    </div>
 
-                    </div>                    
-                    
                      <Scatter
                         className={classes.graph}
                         data={chartData}
+                        key={props.indicator}
                         ref={chartRef}
                         options={graphOptions}
                     />
 
                 </div>
-                   
-
             </main>
         </div>
     );
