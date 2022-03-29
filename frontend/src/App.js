@@ -6,35 +6,17 @@ import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, getGraphColor, indicators} from './constants'
 import { makeStyles } from '@material-ui/core/styles';
-import {graphColors} from './constants'
-import RemoveCircleOutlinedIcon from '@mui/icons-material/RemoveCircleOutlined';
 import CountrySelector from './CountrySelector';
 import IndicatorSelector from './IndicatorSelector';
-
-
-
-
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-// import List from '@material-ui/core/List'
-// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import {
-  List,
-  Avatar,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemAvatar,
-  ListItemText,
   IconButton,
-  Box
+  Box, Toolbar, Button, Menu, AppBar, MenuItem
 } from '@material-ui/core'
 import { render } from 'react-dom';
 import worldBankService from "./services/worldBankService";
 import {WorldBankContext} from "./WorldBankContext";
-// import IconButton from 'material-ui/core/IconButton';
-// import FolderIcon from 'material-ui/icons/FolderIcon';
-// import DeleteIcon from 'material-ui/icons/DeleteIcon';
+
 
 
 const queryString = require('query-string');
@@ -82,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
       color: '#868686',
     },
   },
+  appBar: {
+    marginTop: theme.spacing(1),
+  }
 
 }));
 
@@ -114,8 +99,8 @@ function App() {
   const dataPoints = graphReducerData;
 
     useEffect(async () => {
-        getData(country, indicator);
-    }, []);
+      getData(country, indicator);
+    });
 
   const getData = (country, indicator) => {
     console.log("BEFORE DP", dataPoints);
@@ -143,14 +128,8 @@ function App() {
 
   const handleCountrySelection = (selected) => {
     const stringnifiedURL = selected.join(';');
-
-    // setCountryArr(selected);
     setCountry(selected);
     getData(selected, indicator);
-
-    // const indicatorString = indicator.join(';');
-    // history.push(navigateTo(stringnifiedURL, indicatorString));
-
   };
 
   const handleIndicatorSelection = (selected) => {
@@ -164,146 +143,34 @@ function App() {
 
   };
 
-  // setCountry(parsed.countries)
-  // setIndicator(parsed.indicator)
-
-
   return (
     <div className="App">
+      <Box>
+        <AppBar position="fixed">
+          <Toolbar>
+            <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+            >
+              <Menu />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              News
+            </Typography>
+            <Button color="inherit">Login</Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
 
     <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
-    {/*<Autocomplete*/}
-    {/*        multiple*/}
-    {/*        freeSolo*/}
-    {/*        id="free-solo-2-demo"*/}
-    {/*        disableClearable*/}
-    {/*        value={country}*/}
-    {/*        getOptionLabel={(option) => countries[option]}*/}
-    {/*    // value={["RU", "FR"]}*/}
-    {/*        // value={countries[country] || "Multiple"}*/}
-    {/*        onChange={handleCountrySelection}*/}
-    {/*        // placeholder="Country"*/}
-    {/*        options={Object.keys(countries).map((option) => option)}*/}
-    {/*        renderOption={(option) =>*/}
-    {/*            <ListItem dense={true}>*/}
-    {/*              <ListItemAvatar>*/}
-    {/*                <img*/}
-    {/*                  loading="lazy"*/}
-    {/*                  width="30"*/}
-    {/*                  // src={`https://flagcdn.com/w20/${option.toLowerCase()}.png`}*/}
-    {/*                  src={`https://flagcdn.com/w80/${option.toLowerCase()}.png`}*/}
-    {/*                  alt=""*/}
-    {/*              />*/}
-    {/*              </ListItemAvatar>*/}
-    {/*              <ListItemText noWrap*/}
-    {/*                primary={countries[option]}*/}
-    {/*                secondary={option}*/}
-    {/*              />*/}
-    {/*            </ListItem>*/}
-    {/*        }*/}
-    {/*        renderInput={(params) => (*/}
-    {/*          <TextField*/}
-    {/*            {...params}*/}
-    {/*            label="Country"*/}
-    {/*            margin="normal"*/}
-    {/*            variant="outlined"*/}
-    {/*            InputProps={{ ...params.InputProps, type: 'search' }}*/}
-    {/*          />*/}
-    {/*        )}*/}
-    {/*      />*/}
 
         <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
         <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
 
-        {/*<Autocomplete*/}
-        {/*        // multiple*/}
-        {/*        multiple*/}
-        {/*        id="free-solo-3-demo"*/}
-        {/*        disableClearable*/}
-        {/*        value={indicator}*/}
-        {/*        placeholder="Indicator"*/}
-        {/*        renderTags={(tagValue, getTagProps) =>*/}
-        {/*            tagValue.map((option, index) => {})*/}
-        {/*        }*/}
-        {/*        // value={indicators[indicator] || "Multiple"}*/}
-        {/*        onChange={handleIndicatorSelection}*/}
-        {/*        options={Object.keys(indicators).map((option) => option)}*/}
-        {/*        getOptionLabel={(option) => indicators[option]}*/}
-        {/*        renderOption={(option) =>*/}
-        {/*            <ListItem dense={true}>*/}
-        {/*              <ListItemText noWrap*/}
-        {/*                            primary={indicators[option]}*/}
-        {/*                            secondary={option}*/}
-        {/*              />*/}
-        {/*            </ListItem>*/}
-        {/*        }*/}
-        {/*        renderInput={(params) => (*/}
-        {/*          <TextField*/}
-        {/*            {...params}*/}
-        {/*            label="Indicator"*/}
-        {/*            margin="normal"*/}
-        {/*            variant="outlined"*/}
-        {/*            InputProps={{ ...params.InputProps, type: 'search' }}*/}
-        {/*          />*/}
-        {/*        )}*/}
-        {/*      />*/}
-
-
           <div>
-            {/*<List dense={true}>*/}
-            {/*<Typography className={classes.categoryTitle}>Countries</Typography>*/}
-
-            {/*{ country.map((countryKey, index) => (*/}
-
-
-            {/*    <ListItem>*/}
-            {/*      /!* <ListItemAvatar disablePadding> *!/*/}
-            {/*        <div className={classes.listPin} style={{backgroundColor: getGraphColor(index).line}}>*/}
-
-            {/*        </div>*/}
-            {/*      /!* </ListItemAvatar> *!/*/}
-            {/*      <ListItemText*/}
-            {/*        primary={countries[countryKey]}*/}
-            {/*        secondary={countryKey}*/}
-            {/*      />*/}
-            {/*      <ListItemSecondaryAction>*/}
-            {/*        /!*<IconButton edge="end" aria-label="delete">*!/*/}
-            {/*           <RemoveCircleOutlinedIcon className={classes.iconColor} />*/}
-            {/*        /!*</IconButton>*!/*/}
-            {/*      </ListItemSecondaryAction>*/}
-            {/*    </ListItem>)*/}
-
-
-            {/*)}*/}
-            {/*</List>*/}
-
-
-            {/*<List dense={true}>*/}
-            {/*<Typography className={classes.categoryTitle}>Indicators</Typography>*/}
-
-            {/*{ indicator.map((indicatorKey, index) => (*/}
-
-
-            {/*    <ListItem>*/}
-            {/*      /!* <ListItemAvatar disablePadding> *!/*/}
-            {/*        <div className={classes.listPin}>*/}
-
-            {/*        </div>*/}
-            {/*      /!* </ListItemAvatar> *!/*/}
-            {/*      <ListItemText*/}
-            {/*        primary={indicators[indicatorKey]}*/}
-            {/*        secondary={indicatorKey}*/}
-            {/*      />*/}
-            {/*      <ListItemSecondaryAction>*/}
-            {/*        <IconButton edge="end" aria-label="delete">*/}
-            {/*          <RemoveCircleOutlinedIcon className={classes.iconColor} />*/}
-            {/*        </IconButton>*/}
-            {/*      </ListItemSecondaryAction>*/}
-            {/*    </ListItem>)*/}
-
-
-            {/*)}*/}
-            {/*</List>*/}
           </div>
       
       </div>

@@ -6,14 +6,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import {Scatter} from 'react-chartjs-2';
+import {Chart} from 'chart.js';
+
 import axios from "axios";
 import {changeOpacity, getGraphColor, getGraphLineWidth, graphColors} from './constants'
 import {countries, indicators} from './constants'
+import {CrosshairPlugin, Interpolate} from 'chartjs-plugin-crosshair'
 
 
 import { useLocation, Router, Route, Switch } from "react-router";
 const queryString = require('query-string');
 
+Chart.register(CrosshairPlugin);
 
 const drawerWidth = 240;
 
@@ -167,9 +171,7 @@ function GraphContainer(props) {
             const data = canvas => {
 
 
-                    // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
-                    // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
-                    // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
+
 
                     let datasets2 = [];
                     const numberOfLines = props.country.length
@@ -180,6 +182,11 @@ function GraphContainer(props) {
                         const countryName = countries[entry];
                         const countryData = props.data[entry];
                         const ctx = canvas.getContext("2d")
+
+                        // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
+                        // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
+                        // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
+
                         const gradient = ctx.createLinearGradient(0, 0, 0, 350);
                         gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
                         gradient.addColorStop(1, getGraphColor(index).clear);
@@ -190,12 +197,16 @@ function GraphContainer(props) {
                         datasets2.push({
                             label: countryName,
                             data: countryData,
-                            tension: 0.15, 
+                            tension: 0.0,
                             showLine: true,
+                            fill: true,
+                            pointBackgroundColor: 'rgba(0,0,0,0)',
+                            pointBorderColor: 'rgba(0,0,0,0)',
                             backgroundColor: gradient,
                             borderColor: getGraphColor(index).line,
                             borderWidth: getGraphLineWidth(numberOfLines),
-                            pointRadius: 0,
+                            interpolate: true,
+                            // pointRadius: 0,
                         });
                       });
 
@@ -262,74 +273,70 @@ function GraphContainer(props) {
                      <Scatter
                         className={classes.graph}
                         data={data}
-                        options={{ 
-                            maintainAspectRatio: true, 
-                            responsive: true,
-                            layout: {
-                                padding: {
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                },
+                        plugins={[CrosshairPlugin]}
+                        options={{
+                            elements: {
+                                point: {
+                                    borderWidth: 0,
+                                    radius: 2,
+                                    backgroundColor: 'rgba(0,0,0,0)',
+                                    borderColor: 'rgba(0,0,0,0)',
+                                    color: 'rgba(0,0,0,0)',
+                                }
                             },
-                            legend: {
-                                display: false
-                             },
                             scales: {
-                                xAxes: [{
-                                    drawBorder: false,
-                                    ticks: { 
-                                        display: true,
-                                        autoSkip: true,
-                                        padding: 10,
-                                        maxTicksLimit: 12,
-                                        drawOnChartArea: false
-                                        // fontColor: '#C0C0C0'
-
-                                    },
-                                    gridLines: {
-                                        drawTicks: false,
-                                        tickMarkLength: 0,
-                                        maxTicksLimit: 14,
-                                        // drawOnChartArea: true,
-                                        color: "rgba(0, 0, 0, 0.03)",
-                                        drawBorder: false,
-                                        display: true,
-
-                                    }
-                                }],
-                                yAxes: [{
-                                    position: 'right',
-                                    drawBorder: false,
-                                    ticks: { 
-                                        display: true,
-                                        drawOnChartArea: false,
-                                        padding: 10,
-                                        autoSkip: true,
-                                        color: "rgba(0, 0, 0, 0.03)",
-                                        maxTicksLimit: 9,
-                                        // fontColor: '#C0C0C0',
-                                        drawBorder: false,
-                                        callback: function(value, index, values) {
-                                            return millify(value, {
-                                                precision: 2,
-                                                lowercase: false,
-                                                })
+                                x: {
+                                    type: 'linear',
+                                },
+                                y: {
+                                    type: 'linear',
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    animation: false,
+                                    mode: "interpolate",
+                                    intersect: false,
+                                    callbacks: {
+                                        title: function(a, d) {
+                                            return a[0].element.x.toFixed(2);
+                                        },
+                                        label: function(d) {
+                                            return (
+                                                d.chart.data.datasets[d.datasetIndex].label + ": " + d.element.y.toFixed(2)
+                                            );
                                         }
-                                     },
-                                    gridLines: {
-                                        drawTicks: false,
-                                        tickMarkLength: 0,
-                                        // drawOnChartArea: true,
-                                        color: "rgba(0, 0, 0, 0.05)",
-                                        drawBorder: false,
-                                        display: true,
-
+                                    }
+                                },
+                                crosshair: {
+                                    line: {
+                                        color: '#F66',  // crosshair line color
+                                        width: 3        // crosshair line width
                                     },
-                                }],
-                            }
-                        
+                                    sync: {
+                                        enabled: true,            // enable trace line syncing with other charts
+                                        group: 1,                 // chart group
+                                        suppressTooltips: false   // suppress tooltips when showing a synced tracer
+                                    },
+                                    zoom: {
+                                        enabled: true,                                      // enable zooming
+                                        zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box
+                                        zoomboxBorderColor: '#48F',                         // border color of zoom box
+                                        zoomButtonText: 'Reset Zoom',                       // reset zoom button text
+                                        zoomButtonClass: 'reset-zoom',                      // reset zoom button class
+                                    },
+                                    callbacks: {
+                                        beforeZoom: () => function(start, end) {                  // called before zoom, return false to prevent zoom
+                                            return true;
+                                        },
+                                        afterZoom: () => function(start, end) {                   // called after zoom
+                                        }
+                                    }
+                                }
+                            },
                         }}
                     />
                     
