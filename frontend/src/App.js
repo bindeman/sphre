@@ -5,17 +5,18 @@ import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} fr
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, getGraphColor, indicators} from './constants'
-import { makeStyles } from '@material-ui/core/styles';
+import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import CountrySelector from './CountrySelector';
 import IndicatorSelector from './IndicatorSelector';
 import Typography from '@material-ui/core/Typography';
 import {
   IconButton,
   Box, Toolbar, Button, Menu, AppBar, MenuItem
-} from '@material-ui/core'
+} from '@mui/material'
 import { render } from 'react-dom';
 import worldBankService from "./services/worldBankService";
 import {WorldBankContext} from "./WorldBankContext";
+import {ThemeProvider} from "@emotion/react";
 
 
 
@@ -66,7 +67,22 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     marginTop: theme.spacing(1),
-  }
+  },
+  content: {
+    marginTop: 100,
+  },
+  hoverStyle: {
+    '&:hover': {
+      transition: '0.15s',
+      transform: 'scale(1.05)'
+    },
+    '&:active': {
+      transition: '0.08s',
+      opacity: 0.9,
+      transform: 'scale(1.07)'
+    },
+    transition: '0.15s'
+  },
 
 }));
 
@@ -84,9 +100,11 @@ function putStringIntoArr() {
 function App() {
   const classes = useStyles();
   const history = createBrowserHistory();
-  const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["RU"]);
+  const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["US"]);
   const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
   const [graphData, setGraphData] = React.useState({});
+  const [darkmode, setDarkmode] = React.useState(false);
+
   const { graphReducerData, dispatch } = useContext(WorldBankContext);
   // const [graphReducerData, dispatch] = useReducer(reducer,{});
 
@@ -143,11 +161,62 @@ function App() {
 
   };
 
+  const theme = createMuiTheme({
+    palette: {
+      mode: darkmode ? 'dark' : 'light',
+      primary: {
+        main: darkmode ? '#FF8C00' : '#3f51b5',
+      },
+      secondary: {
+        main: '#00acf5',
+      },
+    },
+    typography: {
+      h1: {
+        fontSize: 36,
+        fontWeight: 700,
+      },
+      h2: {
+        fontSize: 24,
+        fontWeight: 800,
+      },
+      h3: {
+        fontSize: 14,
+        fontWeight: 700,
+        opacity: 0.7,
+      },
+      h4: {
+        fontSize: 14,
+        fontWeight: 500,
+        opacity: 0.7,
+        marginBottom: 12,
+        paddingTop: 12,
+      },
+      subtitle2: {
+        fontSize: 12,
+        fontWeight: 400,
+        opacity: 0.6,
+      },
+      body1: {
+        fontSize: 15,
+        lineHeight: 1.2,
+        fontWeight: 500,
+      },
+      button: {
+        fontSize: 14,
+        textTransform: 'none',
+        fontWeight: 600,
+      },
+    }
+  });
+
   return (
-    <div className="App">
+      <ThemeProvider theme={theme}>
+      <div className="App">
       <Box>
-        <AppBar position="fixed">
+        <AppBar position="fixed" sx={{bgcolor: 'background.default', boxShadow: 'none', color: 'black'}}>
           <Toolbar>
+            <img className={classes.hoverStyle} src={'/sphrelogo.svg'} alt="logo" />
             <IconButton
                 size="large"
                 edge="start"
@@ -157,13 +226,15 @@ function App() {
             >
               <Menu />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              News
-            </Typography>
+            {/*<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>*/}
+            {/*  Sphre*/}
+            {/*</Typography>*/}
             <Button color="inherit">Login</Button>
           </Toolbar>
         </AppBar>
       </Box>
+
+      <Box className={classes.content}>
 
     <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
 
@@ -181,7 +252,10 @@ function App() {
         </Switch>
       </Router>
       </div>
+      </Box>
     </div>
+    </ThemeProvider>
+
   );
 }
 
