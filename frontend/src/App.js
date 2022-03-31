@@ -214,7 +214,7 @@ function App() {
       <ThemeProvider theme={theme}>
       <div className="App">
       <Box>
-        <AppBar position="fixed" sx={{bgcolor: 'background.default', boxShadow: 'none', color: 'black'}}>
+        <AppBar position="fixed" sx={{  bgcolor: 'background.default', boxShadow: 'none', color: 'black' }}>
           <Toolbar>
             <img className={classes.hoverStyle} src={'/sphrelogo.svg'} alt="logo" />
             <IconButton
