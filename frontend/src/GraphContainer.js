@@ -181,6 +181,23 @@ function GraphContainer(props) {
             // const [countryName, countryData] = iterableData[index];
             const countryName = countries[entry];
             const countryData = graphReducerData[props.indicator][entry];
+                    let datasets2 = [];
+                    const numberOfLines = props.country.length
+                    // const countries = Object.entries(props.data);
+                    // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
+                    props.country.map((entry, index) => {
+                        // const [countryName, countryData] = iterableData[index];
+                        const countryName = countries[entry];
+                        const countryData = props.data[entry];
+                        const ctx = canvas.getContext("2d")
+
+                        // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
+                        // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
+                        // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
+
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+                        gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
+                        gradient.addColorStop(1, getGraphColor(index).clear);
 
             // const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
             // gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
@@ -200,6 +217,24 @@ function GraphContainer(props) {
             setLoading(false);
             console.log("DATASETS", datasets)
         });
+
+                        // console.log(countryName);
+                        // console.log(countryData);
+                        datasets2.push({
+                            label: countryName,
+                            data: countryData,
+                            tension: 0.0,
+                            showLine: true,
+                            fill: true,
+                            pointBackgroundColor: 'rgba(0,0,0,0)',
+                            pointBorderColor: 'rgba(0,0,0,0)',
+                            backgroundColor: gradient,
+                            borderColor: getGraphColor(index).line,
+                            borderWidth: getGraphLineWidth(numberOfLines),
+                            interpolate: true,
+                            // pointRadius: 0,
+                        });
+                      });
 
 
         if (chart) {

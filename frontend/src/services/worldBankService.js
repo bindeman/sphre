@@ -1,5 +1,5 @@
 import axios from "axios";
-import {WB_API_LIMIT} from "../constants";
+import { WB_API_LIMIT } from "../constants";
 
 const WorldBankService = {
     getCountryAndIndicator: async function (country, indicator, data) {

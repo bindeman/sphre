@@ -1,21 +1,35 @@
+import logo from './logo.svg';
 import './App.css';
 import React, {useEffect, useContext, useReducer} from "react";
 import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} from "react-router-dom";
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, getGraphColor, indicators} from './constants'
-import { makeStyles } from '@material-ui/core/styles';
+import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import CountrySelector from './CountrySelector';
 import IndicatorSelector from './IndicatorSelector';
-// import {WorldBankContext} from "./WorldBankContext";
+import Typography from '@material-ui/core/Typography';
+import {
+  IconButton,
+  Box, Toolbar, Button, Menu, AppBar, MenuItem
+} from '@mui/material'
+import { render } from 'react-dom';
+import worldBankService from "./services/worldBankService";
+import {WorldBankContext} from "./WorldBankContext";
+import {ThemeProvider} from "@emotion/react";
+
+
 
 const queryString = require('query-string');
+// const location = useLocation();
 
+
+//{arrayFormat: 'separator', arrayFormatSeparator: ';'}
 const parsed = queryString.parse(window.location.pathname);
 const tokenizeParsed = queryString.parse(window.location.pathname, {arrayFormat: 'separator', arrayFormatSeparator: ';'});
 
-// console.log("QUERY STRING: ", parsed);
-// console.log("QUERY STRING: ", tokenizeParsed);
+console.log("QUERY STRING: ", parsed);
+console.log("QUERY STRING: ", tokenizeParsed);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,34 +37,52 @@ const useStyles = makeStyles((theme) => ({
       fontFamily: 'Helvetica Neue, Helvetica, Arial',
       letterSpacing: '-0.03em',
   },
-  // categoryTitle: {
-  //   fontSize: 13,
-  //   textAlign: "left",
-  //   fontWeight: 500,
-  //   marginTop: 40,
-  //   marginBottom: 5,
-  //   marginLeft: 14,
-  // },
-  // listPin: {
-  //   minWidth: "6px",
-  //   height: "21px",
-  //   flexShrink: 0,
-  //
-  //   marginRight: "16px",
-  //   // marginLeft: "16px",
-  //   borderRadius: "3px",
-  //   backgroundColor: "#EBEBEB",
-  // },
-  // iconColor: {
-  //   '&': {
-  //     transition: '0.25s',
-  //     color: '#A6A6A6',
-  //   },
-  //   '&:hover': {
-  //     transition: '0.25s',
-  //     color: '#868686',
-  //   },
-  // },
+  categoryTitle: {
+    fontSize: 13,
+    textAlign: "left",
+    fontWeight: 500,
+    marginTop: 40,
+    marginBottom: 5,
+    marginLeft: 14,
+  },
+  listPin: {
+    minWidth: "6px", 
+    height: "21px", 
+    flexShrink: 0,
+
+    marginRight: "16px",
+    // marginLeft: "16px",
+    borderRadius: "3px",
+    backgroundColor: "#EBEBEB",
+  },
+  iconColor: {
+    '&': {
+      transition: '0.25s',
+      color: '#A6A6A6',
+    },
+    '&:hover': {
+      transition: '0.25s',
+      color: '#868686',
+    },
+  },
+  appBar: {
+    marginTop: theme.spacing(1),
+  },
+  content: {
+    marginTop: 100,
+  },
+  hoverStyle: {
+    '&:hover': {
+      transition: '0.15s',
+      transform: 'scale(1.05)'
+    },
+    '&:active': {
+      transition: '0.08s',
+      opacity: 0.9,
+      transform: 'scale(1.07)'
+    },
+    transition: '0.15s'
+  },
 
 }));
 
@@ -68,12 +100,21 @@ function putStringIntoArr() {
 function App() {
   const classes = useStyles();
   const history = createBrowserHistory();
-  const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["RU"]);
+  const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["US"]);
   const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
-  // const [graphData, setGraphData] = React.useState({});
-  // const { graphReducerData, dispatch } = useContext(WorldBankContext);
+  const [graphData, setGraphData] = React.useState({});
+  const [darkmode, setDarkmode] = React.useState(false);
 
-  // const dataPoints = graphReducerData;
+  const { graphReducerData, dispatch } = useContext(WorldBankContext);
+  // const [graphReducerData, dispatch] = useReducer(reducer,{});
+
+    // setIndicator(nope, () => {
+    //     getData();
+    //     return nope;
+    // });
+    //TODO MAKE INTO REDUCER AND CALL GET DATA EACH TIME OR SET UP CALLBACK FUNCTION FOR DATA
+
+  const dataPoints = graphReducerData;
 
     useEffect(async () => {
         getData(country, indicator);
@@ -110,22 +151,101 @@ function App() {
 
   };
 
+  const theme = createMuiTheme({
+    palette: {
+      mode: darkmode ? 'dark' : 'light',
+      primary: {
+        main: darkmode ? '#FF8C00' : '#3f51b5',
+      },
+      secondary: {
+        main: '#00acf5',
+      },
+    },
+    typography: {
+      h1: {
+        fontSize: 36,
+        fontWeight: 700,
+      },
+      h2: {
+        fontSize: 24,
+        fontWeight: 800,
+      },
+      h3: {
+        fontSize: 14,
+        fontWeight: 700,
+        opacity: 0.7,
+      },
+      h4: {
+        fontSize: 14,
+        fontWeight: 500,
+        opacity: 0.7,
+        marginBottom: 12,
+        paddingTop: 12,
+      },
+      subtitle2: {
+        fontSize: 12,
+        fontWeight: 400,
+        opacity: 0.6,
+      },
+      body1: {
+        fontSize: 15,
+        lineHeight: 1.2,
+        fontWeight: 500,
+      },
+      button: {
+        fontSize: 14,
+        textTransform: 'none',
+        fontWeight: 600,
+      },
+    }
+  });
+
   return (
-    <div className="App">
+      <ThemeProvider theme={theme}>
+      <div className="App">
+      <Box>
+        <AppBar position="fixed" sx={{  bgcolor: 'background.default', boxShadow: 'none', color: 'black' }}>
+          <Toolbar>
+            <img className={classes.hoverStyle} src={'/sphrelogo.svg'} alt="logo" />
+            <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+            >
+              <Menu />
+            </IconButton>
+            {/*<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>*/}
+            {/*  Sphre*/}
+            {/*</Typography>*/}
+            <Button color="inherit">Login</Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
 
-      <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
-          <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
-          <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
+      <Box className={classes.content}>
+
+    <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
+
+        <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
+        <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
+
+          <div>
+          </div>
+      
       </div>
-
-        <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
-        <Router history={history}>
-          <Switch>
-            <Route path="/:query" key={"Graph"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
-          </Switch>
-        </Router>
-        </div>
+      <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
+      <Router history={history}>
+        <Switch>
+          <Route path="/:query" key={"Graph"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
+        </Switch>
+      </Router>
+      </div>
+      </Box>
     </div>
+    </ThemeProvider>
+
   );
 }
 
