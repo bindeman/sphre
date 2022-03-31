@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
     graphCategory: {
         fontWeight: 500,
         textAlign: 'left',
-        fontSize: '20px', 
+        fontSize: '20px',
     },
     content: {
         flexGrow: 1,
@@ -181,27 +181,10 @@ function GraphContainer(props) {
             // const [countryName, countryData] = iterableData[index];
             const countryName = countries[entry];
             const countryData = graphReducerData[props.indicator][entry];
-                    let datasets2 = [];
-                    const numberOfLines = props.country.length
-                    // const countries = Object.entries(props.data);
-                    // console.log("ITERATING THRU:", props.parsedURL.countries.split(';'));
-                    props.country.map((entry, index) => {
-                        // const [countryName, countryData] = iterableData[index];
-                        const countryName = countries[entry];
-                        const countryData = props.data[entry];
-                        const ctx = canvas.getContext("2d")
 
-                        // const gradient2 = ctx.createLinearGradient(0, 0, 0, 350);
-                        // gradient2.addColorStop(0, "rgba(245, 166, 35, 0.2)");
-                        // gradient2.addColorStop(1, "rgba(245, 166, 35, 0.0)");
-
-                        const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                        gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
-                        gradient.addColorStop(1, getGraphColor(index).clear);
-
-            // const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
-            // gradient.addColorStop(0, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
-            // gradient.addColorStop(1, getGraphColor(index).clear);
+            const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
+            gradient.addColorStop(1, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
+            gradient.addColorStop(0, getGraphColor(index).clear);
 
             datasets.push({
                 label: countryName,
@@ -209,32 +192,17 @@ function GraphContainer(props) {
                 tension: 0,
                 showLine: true,
                 borderColor: getGraphColor(index).line,
+                backgroundColor: gradient,
                 borderWidth: getGraphLineWidth(numberOfLines),
                 pointRadius: 2,
-                fill: false
+                fill: true,
+                pointBackgroundColor: 'rgba(0,0,0,0)',
+                pointBorderColor: 'rgba(0,0,0,0)',
             });
 
             setLoading(false);
             console.log("DATASETS", datasets)
         });
-
-                        // console.log(countryName);
-                        // console.log(countryData);
-                        datasets2.push({
-                            label: countryName,
-                            data: countryData,
-                            tension: 0.0,
-                            showLine: true,
-                            fill: true,
-                            pointBackgroundColor: 'rgba(0,0,0,0)',
-                            pointBorderColor: 'rgba(0,0,0,0)',
-                            backgroundColor: gradient,
-                            borderColor: getGraphColor(index).line,
-                            borderWidth: getGraphLineWidth(numberOfLines),
-                            interpolate: true,
-                            // pointRadius: 0,
-                        });
-                      });
 
 
         if (chart) {
@@ -246,41 +214,41 @@ function GraphContainer(props) {
 
     const dataPoints = graphReducerData;
 
-        useEffect(() => {
-            const getData = (country, indicator) => {
-                setLoading(true);
+    useEffect(() => {
+        const getData = (country, indicator) => {
+            setLoading(true);
 
-                let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
+            let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
 
-                if(promises.length > 0) {
-                    Promise.all(promises)
-                        .then((responses) => {
-                            console.log("AFTER DP", dataPoints);
-                            dispatch({
-                                type: "UPDATE_INDICATOR",
-                                payload: dataPoints[indicator],
-                                indicator: props.indicator
-                            })
-                            localGraphOptions['animation'] = {
-                                duration: 500
-                            }
-                            setData();
+            if(promises.length > 0) {
+                Promise.all(promises)
+                    .then((responses) => {
+                        console.log("AFTER DP", dataPoints);
+                        dispatch({
+                            type: "UPDATE_INDICATOR",
+                            payload: dataPoints[indicator],
+                            indicator: props.indicator
                         })
-                        .catch((err) => {
-                            console.log("ERROR receiving one", err)
-                        });
-                } else {
-                    console.log("NOTHING UPDATED", chartData);
-                    localGraphOptions['animation'] = {
-                        duration: 0
-                    }
-                    setData();
+                        localGraphOptions['animation'] = {
+                            duration: 500
+                        }
+                        setData();
+                    })
+                    .catch((err) => {
+                        console.log("ERROR receiving one", err)
+                    });
+            } else {
+                console.log("NOTHING UPDATED", chartData);
+                localGraphOptions['animation'] = {
+                    duration: 0
                 }
+                setData();
             }
+        }
 
-            getData(props.country, props.indicator);
+        getData(props.country, props.indicator);
 
-        }, []);
+    }, []);
 
 
     return (
@@ -303,32 +271,32 @@ function GraphContainer(props) {
                     <div className={classes.statsContainer}>
 
                         {
-                        !loading && props.country.map((entry, index) => {
+                            !loading && props.country.map((entry, index) => {
 
-                            const countryName = countries[entry];
-                            console.log("INFOTHERE", graphReducerData[props.indicator] && graphReducerData[props.indicator][entry] );
-                            const countryData = graphReducerData[props.indicator][entry];
-                            // console.log("COUNTRY DATA: ", countryData)
+                                const countryName = countries[entry];
+                                console.log("INFOTHERE", graphReducerData[props.indicator] && graphReducerData[props.indicator][entry] );
+                                const countryData = graphReducerData[props.indicator][entry];
+                                // console.log("COUNTRY DATA: ", countryData)
 
-                            return(
-                                <div key={entry}>
-                                    <h1 style={{color: getGraphColor(index).line}} className={classes.graphSubtitle}>{countryName}</h1>
-                                    
-                                    <h1 className={classes.graphTitle}> {
+                                return(
+                                    <div key={entry}>
+                                        <h1 style={{color: getGraphColor(index).line}} className={classes.graphSubtitle}>{countryName}</h1>
 
-                                        countryData && countryData[0] ? millify(countryData[0].y, {
+                                        <h1 className={classes.graphTitle}> {
+
+                                            countryData && countryData[0] ? millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
-                                                }) : "--"
+                                            }) : "--"
 
-                                    }
-                                    </h1>
-                                </div>
-                            )
-                        })}
+                                        }
+                                        </h1>
+                                    </div>
+                                )
+                            })}
                     </div>
 
-                     <Scatter
+                    <Scatter
                         className={classes.graph}
                         data={chartData}
                         key={props.indicator}

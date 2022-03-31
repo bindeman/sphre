@@ -66,12 +66,22 @@ export const graphColors = [
 
 
 export const graphOptions = {
+  point: {
+    borderWidth: 0,
+    radius: 2,
+    backgroundColor: 'rgba(0,0,0,0)',
+    borderColor: 'rgba(0,0,0,0)',
+    color: 'rgba(0,0,0,0)',
+  },
   scales: {
     x: {
       type: 'linear',
     }
   },
   plugins: {
+    legend: {
+      display: false
+    },
     tooltip: {
       mode: "interpolate",
       intersect: false,
@@ -651,13 +661,6 @@ export const moreindicatorsAIGenerated = {
     popularity: 5,
     category: "Demographic",
     relatedIndicators: ["SP.MTR.1524.ZS", "SP.DYN.IMRT.IN", "SH.STA.MMRT"]
-  },
-  "SH.STA.MMRT": {
-    name: "Maternal mortality rate (modeled estimate, per 100,000 live births)",
-    prettyName: "Maternal Mortality Rate",
-    popularity: 6,
-    category: "Demographic",
-    relatedIndicators: ["SH.STA.MMRT", "SP.MTR.1524.ZS", "SP.DYN.IMRT.IN"]
   },
   "SP.RUR.TFRT": {
     name: "Fertility rate, total (births per woman)",
