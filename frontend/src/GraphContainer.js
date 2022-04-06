@@ -163,6 +163,8 @@ const useStyles = makeStyles((theme) => ({
 function GraphContainer(props) {
     const classes = useStyles();
     const [loading, setLoading] = React.useState(true);
+    const [prevDataLoaded, setPrevDataLoaded] = React.useState(false);
+
 
     let localGraphOptions = graphOptions;
     const { graphReducerData, dispatch } = useContext(WorldBankContext);
@@ -201,6 +203,7 @@ function GraphContainer(props) {
             });
 
             setLoading(false);
+            setPrevDataLoaded(false);
             console.log("DATASETS", datasets)
         });
 
@@ -212,11 +215,60 @@ function GraphContainer(props) {
         }
     }
 
+
+
+    function setPreviousData() {
+        const chart = chartRef.current;
+        const numberOfLines = props.country.length;
+        let someDataLoaded = false;
+        props.country.map((entry, index) => {
+            //push if data is already loaded or cached
+            if(graphReducerData && graphReducerData[props.indicator] && graphReducerData[props.indicator][entry]) {
+                // const [countryName, countryData] = iterableData[index];
+                const countryName = countries[entry];
+                const countryData = graphReducerData[props.indicator][entry];
+
+                const gradient = chart.ctx.createLinearGradient(0, chart.chartArea.bottom, 0, chart.chartArea.top);
+                gradient.addColorStop(1, changeOpacity(getGraphColor(index).background, 0.36 / numberOfLines));
+                gradient.addColorStop(0, getGraphColor(index).clear);
+
+                datasets.push({
+                    label: countryName,
+                    data: countryData,
+                    tension: 0,
+                    showLine: true,
+                    borderColor: getGraphColor(index).line,
+                    backgroundColor: gradient,
+                    borderWidth: getGraphLineWidth(numberOfLines),
+                    pointRadius: 2,
+                    fill: true,
+                    pointBackgroundColor: 'rgba(0,0,0,0)',
+                    pointBorderColor: 'rgba(0,0,0,0)',
+                });
+
+                someDataLoaded = true;
+                // setLoading(false);
+                console.log("PREV DATASETS", datasets)
+            }
+        });
+
+        setPrevDataLoaded(someDataLoaded);
+
+        if (someDataLoaded && chart) {
+            setChartData({
+                datasets: datasets
+            });
+        }
+    }
+
     const dataPoints = graphReducerData;
 
     useEffect(() => {
+
+        setLoading(true);
+        setPreviousData();
+
         const getData = (country, indicator) => {
-            setLoading(true);
 
             let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
 
@@ -232,6 +284,8 @@ function GraphContainer(props) {
                         localGraphOptions['animation'] = {
                             duration: 500
                         }
+                        console.log("Updated Chart Data");
+
                         setData();
                     })
                     .catch((err) => {
@@ -254,7 +308,6 @@ function GraphContainer(props) {
     return (
         <div className={classes.root}>
             <CssBaseline />
-
             <main className={classes.content}>
 
                 {/*<div className={classes.graphImage}>*/}
@@ -264,14 +317,14 @@ function GraphContainer(props) {
 
                     <div className={classes.parentContainer}>
                         <h1 className={classes.graphIndicator}>{indicators[props.indicator]}</h1>
-                        {loading && <div style={{marginLeft: 'auto', order: 2}}><LoadingSpinner /></div>}
+                        {loading && <div style={{marginLeft: 'auto', order: 2}}> <LoadingSpinner /></div>}
                     </div>
 
                     {/* <h1 className={classes.graphSubtitle}>{props.data.country}</h1> */}
                     <div className={classes.statsContainer}>
 
                         {
-                            !loading && props.country.map((entry, index) => {
+                            (prevDataLoaded || !loading) && props.country.map((entry, index) => {
 
                                 const countryName = countries[entry];
                                 console.log("INFOTHERE", graphReducerData[props.indicator] && graphReducerData[props.indicator][entry] );
@@ -287,7 +340,7 @@ function GraphContainer(props) {
                                             countryData && countryData[0] ? millify(countryData[0].y, {
                                                 precision: 2,
                                                 lowercase: false,
-                                            }) : "--"
+                                            }) : "--   "
 
                                         }
                                         </h1>

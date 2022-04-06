@@ -17,6 +17,8 @@ import { render } from 'react-dom';
 import worldBankService from "./services/worldBankService";
 import {WorldBankContext} from "./WorldBankContext";
 import {ThemeProvider} from "@emotion/react";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Countries from "./Countries";
 
 
 
@@ -214,12 +216,29 @@ function App() {
                 aria-label="menu"
                 sx={{ mr: 2 }}
             >
-              <Menu />
             </IconButton>
+              <Menu />
+              {/*<Typography onClick={() => history.push('/about')} sx={{ minWidth: 100 }}>About</Typography>*/}
+              <Typography onClick={() => history.push('/trends')} sx={{ minWidth: 150 }}>Trends</Typography>
+              {/*<Typography onClick={() => history.push('/comparison')} sx={{ minWidth: 100 }}>Comparison</Typography>*/}
+              <Typography onClick={() => history.push('/indicators')} sx={{ minWidth: 150 }}>Indicators</Typography>
+              <Typography onClick={() => history.push('/countries')} sx={{ minWidth: 150 }}>Countries</Typography>
+
+
+            <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+            >
+              <InfoOutlinedIcon/>
+            </IconButton>
+
+
             {/*<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>*/}
             {/*  Sphre*/}
             {/*</Typography>*/}
-            <Button color="inherit">Login</Button>
           </Toolbar>
         </AppBar>
       </Box>
@@ -238,6 +257,8 @@ function App() {
       <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
       <Router history={history}>
         <Switch>
+          <Route path="/countries" key={"Countries"} component={(props) => <Countries {...props} />}/>
+          <Route path="/indicators" key={"Indicators"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
           <Route path="/:query" key={"Graph"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
         </Switch>
       </Router>
