@@ -164,6 +164,7 @@ function GraphContainer(props) {
     const classes = useStyles();
     const [loading, setLoading] = React.useState(true);
     const [prevDataLoaded, setPrevDataLoaded] = React.useState(false);
+    const [lastChartRender, setLastChartRender] = React.useState(null)
 
 
     let localGraphOptions = graphOptions;
@@ -219,7 +220,9 @@ function GraphContainer(props) {
 
     function setPreviousData() {
         const chart = chartRef.current;
-        const numberOfLines = props.country.length;
+        let numberOfLines = props.country.length;
+
+
         let someDataLoaded = false;
         props.country.map((entry, index) => {
             //push if data is already loaded or cached
@@ -267,6 +270,9 @@ function GraphContainer(props) {
 
         setLoading(true);
         setPreviousData();
+        localGraphOptions['animation'] = {
+            duration: 0,
+        }
 
         const getData = (country, indicator) => {
 
@@ -282,11 +288,12 @@ function GraphContainer(props) {
                             indicator: props.indicator
                         })
                         localGraphOptions['animation'] = {
-                            duration: 500
+                            duration: 300
                         }
                         console.log("Updated Chart Data");
 
                         setData();
+                        setLastChartRender(Date.now())
                     })
                     .catch((err) => {
                         console.log("ERROR receiving one", err)
@@ -297,6 +304,7 @@ function GraphContainer(props) {
                     duration: 0
                 }
                 setData();
+                setLastChartRender(Date.now())
             }
         }
 
@@ -349,13 +357,15 @@ function GraphContainer(props) {
                             })}
                     </div>
 
+
                     <Scatter
                         className={classes.graph}
                         data={chartData}
-                        key={props.indicator}
+                        key={lastChartRender}
                         ref={chartRef}
                         options={graphOptions}
                     />
+
 
                 </div>
             </main>

@@ -61,6 +61,11 @@ export const graphColors = [
     {background: "rgba(245, 166, 35, 0.20)", clear: "rgba(245, 166, 35, 0.00)", line: "rgba(245, 166, 35)"},
     {background: "rgba(184, 233, 134, 0.20)", clear: "rgba(184, 233, 134, 0.00)", line: "rgba(184, 233, 134)"},
     {background: "rgba(144, 19, 254, 0.20)", clear: "rgba(144, 19, 254, 0.00)", line: "rgba(144, 19, 254)"},
+    {background: "rgba(14, 75, 220, 0.20)", clear: "rgba(14, 75, 220, 0.00)", line: "rgba(14, 75, 220)"},
+    {background: "rgba(244, 101, 34, 0.20)", clear: "rgba(244, 101, 34, 0.00)", line: "rgba(244, 101, 34)"},
+    {background: "rgba(250, 218, 51, 0.20)", clear: "rgba(250, 218, 51, 0.00)", line: "rgba(250, 218, 51)"},
+    {background: "rgba(255, 48, 175, 0.20)", clear: "rgba(255, 48, 175, 0.00)", line: "rgba(255, 48, 175)"},
+    //default background color when colors run out
     {background: "rgba(155, 155, 155, 0.20)", clear: "rgba(155, 155, 155, 0.00)", line: "rgba(155, 155, 155)"},
 ];
 
