@@ -1,11 +1,13 @@
 import React from 'react';
 
 import GraphContainer from "./GraphContainer";
-import {makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@mui/styles';
+import { Theme } from '@mui/material';
+
 
 const useStyles = makeStyles((theme) => ({
     container: {
-        margin: theme.spacing(5),
+        margin: 36,
     },
 }));
 

@@ -5,13 +5,14 @@ import {Redirect, Route, Switch, useHistory, Router, withRouter, useLocation} fr
 import GraphContent from "./GraphContent";
 import { createBrowserHistory } from "history";
 import {countries, getGraphColor, indicators} from './constants'
-import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
 import CountrySelector from './CountrySelector';
 import IndicatorSelector from './IndicatorSelector';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
+import { makeStyles, createStyles, useTheme } from '@mui/styles';
 import {
   IconButton,
-  Box, Toolbar, Button, Menu, AppBar, MenuItem
+  Box, Toolbar, Button, Menu, AppBar, MenuItem,
+  createMuiTheme, createTheme
 } from '@mui/material'
 import { render } from 'react-dom';
 import worldBankService from "./services/worldBankService";
@@ -68,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
-    marginTop: theme.spacing(1),
+    marginTop: 2,
   },
   content: {
     marginTop: 100,
@@ -105,55 +106,11 @@ function App() {
   const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["US"]);
   const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
   const [graphData, setGraphData] = React.useState({});
-  const [darkmode, setDarkmode] = React.useState(false);
+  const [darkmode, setDarkmode] = React.useState(true);
 
   const { graphReducerData, dispatch } = useContext(WorldBankContext);
-  // const [graphReducerData, dispatch] = useReducer(reducer,{});
 
-    // setIndicator(nope, () => {
-    //     getData();
-    //     return nope;
-    // });
-    //TODO MAKE INTO REDUCER AND CALL GET DATA EACH TIME OR SET UP CALLBACK FUNCTION FOR DATA
-
-  const dataPoints = graphReducerData;
-
-    useEffect(async () => {
-        getData(country, indicator);
-    }, []);
-
-  const getData = (country, indicator) => {
-    // console.log("BEFORE DP", dataPoints);
-    const indicatorString = indicator.join(';');
-    const countryString = country.join(';');
-    history.push(navigateTo(countryString, indicatorString));
-  }
-
-
-  const navigateTo = (country, indicator) => {
-    // console.log(`&graph=true&countries=${country}&indicators=${indicator}`)
-    return `&graph=true&countries=${country}&indicators=${indicator}`;
-  }
-
-  const handleCountrySelection = (selected) => {
-    // const stringnifiedURL = selected.join(';');
-
-    setCountry(selected);
-    getData(selected, indicator);
-
-
-  };
-
-  const handleIndicatorSelection = (selected) => {
-    // const stringnifiedURL = selected.join(';');
-
-    setIndicator(selected);
-    getData(country, selected);
-
-
-  };
-
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       mode: darkmode ? 'dark' : 'light',
       primary: {
@@ -199,16 +156,64 @@ function App() {
         textTransform: 'none',
         fontWeight: 600,
       },
+      spacer: {
+        marginTop: 20,
+      }
     }
   });
 
+  // const [graphReducerData, dispatch] = useReducer(reducer,{});
+
+    // setIndicator(nope, () => {
+    //     getData();
+    //     return nope;
+    // });
+    //TODO MAKE INTO REDUCER AND CALL GET DATA EACH TIME OR SET UP CALLBACK FUNCTION FOR DATA
+
+  const dataPoints = graphReducerData;
+
+    useEffect(async () => {
+        getData(country, indicator);
+    }, []);
+
+  const getData = (country, indicator) => {
+    // console.log("BEFORE DP", dataPoints);
+    const indicatorString = indicator.join(';');
+    const countryString = country.join(';');
+    history.push(navigateTo(countryString, indicatorString));
+  }
+
+
+  const navigateTo = (country, indicator) => {
+    // console.log(`&graph=true&countries=${country}&indicators=${indicator}`)
+    return `&graph=true&countries=${country}&indicators=${indicator}`;
+  }
+
+  const handleCountrySelection = (selected) => {
+    // const stringnifiedURL = selected.join(';');
+
+    setCountry(selected);
+    getData(selected, indicator);
+
+
+  };
+
+  const handleIndicatorSelection = (selected) => {
+    // const stringnifiedURL = selected.join(';');
+
+    setIndicator(selected);
+    getData(country, selected);
+
+
+  };
+
   return (
       <ThemeProvider theme={theme}>
-      <div className="App">
+      <Box className="App" sx={{  bgcolor: 'background.paper' }}>
       <Box>
-        <AppBar position="fixed" sx={{  bgcolor: 'background.default', boxShadow: 'none', color: 'black' }}>
+        <AppBar position="fixed" sx={{  bgcolor: 'background.paper', boxShadow: 'none', color: 'text.primary' }}>
           <Toolbar>
-            <img className={classes.hoverStyle} src={'/sphrelogo.svg'} alt="logo" />
+            <img className={classes.hoverStyle} src={darkmode ? '/sphrelogo_light.svg' : '/sphrelogo.svg'} alt="logo" />
             <IconButton
                 size="large"
                 edge="start"
@@ -245,16 +250,16 @@ function App() {
 
       <Box className={classes.content}>
 
-    <div style={{width: 250, position: 'fixed', backgroundColor: 'light-gray', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
+    <Box style={{width: 250, position: 'fixed', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
 
         <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
         <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
 
-          <div>
-          </div>
+          <Box>
+          </Box>
       
-      </div>
-      <div style={{backgroundColor: 'light-gray', marginLeft: 250}}>
+      </Box>
+      <Box style={{marginLeft: 250}}>
       <Router history={history}>
         <Switch>
           <Route path="/countries" key={"Countries"} component={(props) => <Countries {...props} />}/>
@@ -262,9 +267,9 @@ function App() {
           <Route path="/:query" key={"Graph"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
         </Switch>
       </Router>
-      </div>
       </Box>
-    </div>
+      </Box>
+    </Box>
     </ThemeProvider>
 
   );

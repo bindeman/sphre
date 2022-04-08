@@ -29,11 +29,11 @@ export const oldCountries = {
 export const WB_API_LIMIT = 520;
 
 export const GRAPH_LINE_WIDTH_EXTRA_THICK = 7;
-export const GRAPH_LINE_WIDTH_THICK = 6;
-export const GRAPH_LINE_WIDTH_MED = 5;
-export const GRAPH_LINE_WIDTH_THIN = 3;
-export const GRAPH_LINE_WIDTH_EXTRA_THIN = 2;
-export const GRAPH_LINE_WIDTH_ULTRA_THIN = 1.5;
+export const GRAPH_LINE_WIDTH_THICK = 7;
+export const GRAPH_LINE_WIDTH_MED = 6;
+export const GRAPH_LINE_WIDTH_THIN = 5;
+export const GRAPH_LINE_WIDTH_EXTRA_THIN = 3.5;
+export const GRAPH_LINE_WIDTH_ULTRA_THIN = 2.5;
 
 export function getGraphColor(index) {
   return index >= graphColors.length ?
@@ -61,10 +61,22 @@ export const graphColors = [
     {background: "rgba(245, 166, 35, 0.20)", clear: "rgba(245, 166, 35, 0.00)", line: "rgba(245, 166, 35)"},
     {background: "rgba(184, 233, 134, 0.20)", clear: "rgba(184, 233, 134, 0.00)", line: "rgba(184, 233, 134)"},
     {background: "rgba(144, 19, 254, 0.20)", clear: "rgba(144, 19, 254, 0.00)", line: "rgba(144, 19, 254)"},
+
     {background: "rgba(14, 75, 220, 0.20)", clear: "rgba(14, 75, 220, 0.00)", line: "rgba(14, 75, 220)"},
     {background: "rgba(244, 101, 34, 0.20)", clear: "rgba(244, 101, 34, 0.00)", line: "rgba(244, 101, 34)"},
     {background: "rgba(250, 218, 51, 0.20)", clear: "rgba(250, 218, 51, 0.00)", line: "rgba(250, 218, 51)"},
     {background: "rgba(255, 48, 175, 0.20)", clear: "rgba(255, 48, 175, 0.00)", line: "rgba(255, 48, 175)"},
+
+    {background: "rgba(66, 0, 201, 0.20)", clear: "rgba(66, 0, 201, 0.00)", line: "rgba(66, 0, 201)"},
+    {background: "rgba(159, 63, 18, 0.20)", clear: "rgba(159, 63, 18, 0.00)", line: "rgba(159, 63, 18)"},
+    {background: "rgba(197, 156, 79, 0.20)", clear: "rgba(197, 156, 79, 0.00)", line: "rgba(197, 156, 79)"},
+    {background: "rgba(198, 13, 106, 0.20)", clear: "rgba(198, 13, 106, 0.00)", line: "rgba(198, 13, 106)"},
+
+    {background: "rgba(93, 128, 147, 0.20)", clear: "rgba(93, 128, 147, 0.00)", line: "rgba(93, 128, 147)"},
+    {background: "rgba(247, 114, 110, 0.20)", clear: "rgba(247, 114, 110, 0.00)", line: "rgba(247, 114, 110)"},
+    {background: "rgba(104, 116, 41, 0.20)", clear: "rgba(104, 116, 41, 0.00)", line: "rgba(104, 116, 41)"},
+    {background: "rgba(205, 213, 23, 0.20)", clear: "rgba(205, 213, 23, 0.00)", line: "rgba(205, 213, 23)"},
+
     //default background color when colors run out
     {background: "rgba(155, 155, 155, 0.20)", clear: "rgba(155, 155, 155, 0.00)", line: "rgba(155, 155, 155)"},
 ];

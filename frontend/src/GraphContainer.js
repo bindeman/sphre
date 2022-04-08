@@ -12,7 +12,6 @@ import {
     LinearScale,
     PointElement,
     LineElement,
-    Tooltip,
     Interaction,
     Legend,
 } from 'chart.js';
@@ -28,16 +27,18 @@ import {countries, indicators} from './constants'
 
 
 import { useLocation, Router, Route, Switch } from "react-router";
-import {WorldBankContext} from "./WorldBankContext";
+import { WorldBankContext } from "./WorldBankContext";
 import worldBankService from "./services/worldBankService";
 import LoadingSpinner from "./Spinner";
+import { WarningRounded } from "@material-ui/icons";
+import { IconButton, Tooltip } from "@mui/material";
+import {Box} from "@material-ui/core";
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
-    Tooltip,
     Legend,
     CrosshairPlugin
 );
@@ -61,11 +62,15 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: 'wrap',
         rowGap: 0,
         columnGap: 60,
+        marginBottom: 16,
+
         [theme.breakpoints.down('sm')]: {
             columnGap: 30,
-
+            marginBottom: 4,
         },
-
+        [theme.breakpoints.down('lg')]: {
+            marginBottom: 8,
+        },
     },
     graphContainer: {
         display: 'block',
@@ -105,17 +110,28 @@ const useStyles = makeStyles((theme) => ({
     graphSubtitle: {
         fontWeight: 400,
         textAlign: 'left',
-        fontSize: '16px',
+        fontSize: 16,
         color: '#B8B8B8',
         textTransform: 'uppercase',
-        // marginTop: '40px',
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 14,
+        },
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 12,
+        },
     },
     graphIndicator: {
         fontWeight: 400,
         textAlign: 'left',
-        fontSize: '22px',
+        fontSize: 22,
         color: '#B8B8B8',
         marginTop: 0,
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 19,
+        },
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 14,
+        },
     },
     graphCategory: {
         fontWeight: 500,
@@ -140,7 +156,8 @@ const useStyles = makeStyles((theme) => ({
             borderRadius: 10,
 
         },
-        backgroundColor: "#fff",
+        // backgroundColor: "#fff",
+        // bgcolor: 'background.default',
         // maxWidth: 'calc(100% - 250px)',
         borderRadius: 30,
 
@@ -158,7 +175,16 @@ const useStyles = makeStyles((theme) => ({
     fixedHeight: {
         height: 240,
     },
+    amber: {
+        color: '#FFC461',
+    },
+    rightGraph: {
+        marginLeft: 'auto',
+        order: 2,
+    }
 }));
+
+
 
 function GraphContainer(props) {
     const classes = useStyles();
@@ -266,6 +292,58 @@ function GraphContainer(props) {
 
     const dataPoints = graphReducerData;
 
+    const getData = (country, indicator, clearData = false) => {
+
+        if(clearData) {
+            delete dataPoints[indicator];
+        }
+
+        let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
+
+        if(promises.length > 0) {
+            Promise.all(promises)
+                .then((responses) => {
+                    console.log("AFTER DP", dataPoints);
+                    dispatch({
+                        type: "UPDATE_INDICATOR",
+                        payload: dataPoints[indicator],
+                        indicator: props.indicator
+                    })
+                    localGraphOptions['animation'] = {
+                        duration: 300
+                    }
+                    console.log("Updated Chart Data");
+
+                    setData();
+                    setLastChartRender(Date.now())
+                })
+                .catch((err) => {
+                    console.log("ERROR receiving one", err)
+                });
+        } else {
+            console.log("NOTHING UPDATED", chartData);
+            localGraphOptions['animation'] = {
+                duration: 0
+            }
+            setData();
+            setLastChartRender(Date.now())
+        }
+    }
+
+    function WarningTooltip() {
+        const classes = useStyles();
+
+        return(
+            <Tooltip title="Error loading some data, click to reload">
+                <IconButton onClick={() => getData(props.country, props.indicator, true)}>
+                    <WarningRounded className={classes.amber}/>
+                </IconButton>
+            </Tooltip>
+
+        )
+
+    }
+
     useEffect(() => {
 
         setLoading(true);
@@ -274,49 +352,15 @@ function GraphContainer(props) {
             duration: 0,
         }
 
-        const getData = (country, indicator) => {
-
-            let promises = worldBankService.getCountriesAndIndicatorOptimized(country, indicator, dataPoints)
-
-            if(promises.length > 0) {
-                Promise.all(promises)
-                    .then((responses) => {
-                        console.log("AFTER DP", dataPoints);
-                        dispatch({
-                            type: "UPDATE_INDICATOR",
-                            payload: dataPoints[indicator],
-                            indicator: props.indicator
-                        })
-                        localGraphOptions['animation'] = {
-                            duration: 300
-                        }
-                        console.log("Updated Chart Data");
-
-                        setData();
-                        setLastChartRender(Date.now())
-                    })
-                    .catch((err) => {
-                        console.log("ERROR receiving one", err)
-                    });
-            } else {
-                console.log("NOTHING UPDATED", chartData);
-                localGraphOptions['animation'] = {
-                    duration: 0
-                }
-                setData();
-                setLastChartRender(Date.now())
-            }
-        }
-
         getData(props.country, props.indicator);
 
     }, []);
 
 
     return (
-        <div className={classes.root}>
+        <Box className={classes.root}>
             <CssBaseline />
-            <main className={classes.content}>
+            <Box className={classes.content} sx={{bgcolor: 'background.default'}}>
 
                 {/*<div className={classes.graphImage}>*/}
                 {/*    <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>*/}
@@ -325,7 +369,10 @@ function GraphContainer(props) {
 
                     <div className={classes.parentContainer}>
                         <h1 className={classes.graphIndicator}>{indicators[props.indicator]}</h1>
-                        {loading && <div style={{marginLeft: 'auto', order: 2}}> <LoadingSpinner /></div>}
+                        <div className={classes.rightGraph}>
+                        {loading && <LoadingSpinner />}
+                        <WarningTooltip/>
+                        </div>
                     </div>
 
                     {/* <h1 className={classes.graphSubtitle}>{props.data.country}</h1> */}
@@ -368,8 +415,8 @@ function GraphContainer(props) {
 
 
                 </div>
-            </main>
-        </div>
+            </Box>
+        </Box>
     );
 }
 

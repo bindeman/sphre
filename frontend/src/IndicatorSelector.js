@@ -177,7 +177,7 @@ export default function IndicatorSelector(props) {
 
     return (
         <React.Fragment>
-            <Box sx={{ width: 221, fontSize: 13 }}>
+            <Box sx={{ width: 221, fontSize: 13, marginTop: '28px' }}>
                 <Button disableRipple aria-describedby={id} onClick={handleClick}>
                     <span>Indicators</span>
                     <Add />

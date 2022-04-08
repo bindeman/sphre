@@ -25,7 +25,7 @@ const WorldBankService = {
             dataPoints.map((item) => {
                 if (item.value !== null) {
                     if(data[indicator][country])
-                    data[indicator][country].unshift({x: parseFloat(`${item.date}.1`), y: item.value});
+                    data[indicator][country].push({x: parseFloat(`${item.date}.1`), y: item.value});
                 }
             });
         }

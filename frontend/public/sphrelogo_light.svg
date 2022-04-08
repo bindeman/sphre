@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="116px" height="37px" viewBox="0 0 116 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 4</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-34.000000, -75.000000)">
+            <g id="Group-4" transform="translate(36.000000, 77.000000)">
+                <text id="SPHRE" font-family="CircularStd-Black, Circular Std" font-size="24" font-weight="800" letter-spacing="-1.5" fill="#FFFFFF">
+                    <tspan x="44.578" y="24">SPHRE</tspan>
+                </text>
+                <g id="Group-3" stroke="#FFFFFF" stroke-width="3">
+                    <circle id="Oval" cx="16.5" cy="16.5" r="16.5"></circle>
+                    <line x1="3.57214258e-14" y1="16.5" x2="32.7828947" y2="16.25" id="Line"></line>
+                    <line x1="16.25" y1="0.214285714" x2="16.5" y2="33" id="Line-2"></line>
+                    <path d="M18,0.7 C23.3333333,4.6814507 26,9.9314507 26,16.45 C26,22.9685493 23.3333333,28.2185493 18,32.2" id="Line-3" stroke-linecap="square"></path>
+                    <path d="M7,0.7 C12.3333333,4.6814507 15,9.9314507 15,16.45 C15,22.9685493 12.3333333,28.2185493 7,32.2" id="Line-3" stroke-linecap="square" transform="translate(11.000000, 16.450000) scale(-1, 1) translate(-11.000000, -16.450000) "></path>
+                    <path d="M14,-3 C18,-0.0929090116 20,3.74042432 20,8.5 C20,13.2595757 18,17.092909 14,20" id="Line-3" stroke-linecap="square" transform="translate(17.000000, 8.500000) rotate(90.000000) translate(-17.000000, -8.500000) "></path>
+                    <path d="M14,13 C18,15.907091 20,19.7404243 20,24.5 C20,29.2595757 18,33.092909 14,36" id="Line-3" stroke-linecap="square" transform="translate(17.000000, 24.500000) scale(1, -1) rotate(90.000000) translate(-17.000000, -24.500000) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
