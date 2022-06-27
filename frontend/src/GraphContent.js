@@ -1,8 +1,9 @@
 import React from 'react';
 
 import GraphContainer from "./GraphContainer";
-import {makeStyles} from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material';
+import {Box} from "@mui/material";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -15,7 +16,7 @@ function GraphContent(props) {
     const classes = useStyles();
 
     return (
-        <div className={classes.container}>
+        <Box className={classes.container}>
             {
                 props.indicator.map((indicatorID, index) => {
                 return (
@@ -23,7 +24,7 @@ function GraphContent(props) {
                 />)
             })
             }
-        </div>
+        </Box>
     );
 }
 

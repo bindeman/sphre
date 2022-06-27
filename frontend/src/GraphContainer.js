@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useRef, useContext} from 'react';
 
+import { Theme } from '@mui/material';
 import clsx from 'clsx';
 import millify from "millify";
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
+import { makeStyles } from '@mui/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { ChartData, ChartArea } from 'chart.js';
 import {
     Chart as ChartJS,
@@ -17,7 +17,7 @@ import {
 } from 'chart.js';
 
 import 'chart.js/auto';
-import { Scatter } from 'react-chartjs-2';
+import { Scatter, Line } from 'react-chartjs-2';
 
 import {CrosshairPlugin, Interpolate} from 'chartjs-plugin-crosshair';
 
@@ -30,9 +30,9 @@ import { useLocation, Router, Route, Switch } from "react-router";
 import { WorldBankContext } from "./WorldBankContext";
 import worldBankService from "./services/worldBankService";
 import LoadingSpinner from "./Spinner";
-import { WarningRounded } from "@material-ui/icons";
+import { WarningRounded } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
-import {Box} from "@material-ui/core";
+import {Box} from "@mui/material";
 
 ChartJS.register(
     CategoryScale,
@@ -40,10 +40,10 @@ ChartJS.register(
     PointElement,
     LineElement,
     Legend,
-    CrosshairPlugin
+    // CrosshairPlugin
 );
 
-Interaction.modes.interpolate = Interpolate
+// Interaction.modes.interpolate = Interpolate
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: 'Helvetica Neue, Helvetica, Arial',
         letterSpacing: '-0.03em',
         marginTop: 25,
-
     },
     graph: {
         width: "100%",
@@ -113,12 +112,12 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 16,
         color: '#B8B8B8',
         textTransform: 'uppercase',
-        [theme.breakpoints.down('sm')]: {
-            fontSize: 14,
-        },
-        [theme.breakpoints.down('xs')]: {
-            fontSize: 12,
-        },
+        // [theme.breakpoints.down('sm')]: {
+        //     fontSize: 14,
+        // },
+        // [theme.breakpoints.down('xs')]: {
+        //     fontSize: 12,
+        // },
     },
     graphIndicator: {
         fontWeight: 400,
@@ -227,6 +226,7 @@ function GraphContainer(props) {
                 fill: true,
                 pointBackgroundColor: 'rgba(0,0,0,0)',
                 pointBorderColor: 'rgba(0,0,0,0)',
+                borderJoinStyle: 'miter',
             });
 
             setLoading(false);
@@ -273,6 +273,7 @@ function GraphContainer(props) {
                     fill: true,
                     pointBackgroundColor: 'rgba(0,0,0,0)',
                     pointBorderColor: 'rgba(0,0,0,0)',
+                    borderJoinStyle: 'miter',
                 });
 
                 someDataLoaded = true;
@@ -358,14 +359,14 @@ function GraphContainer(props) {
 
 
     return (
-        <Box className={classes.root}>
+        <div>
             <CssBaseline />
-            <Box className={classes.content} sx={{bgcolor: 'background.default'}}>
+            <Box className={classes.content}>
 
                 {/*<div className={classes.graphImage}>*/}
                 {/*    <img className={classes.graphImage} src='https://cdn.britannica.com/42/3842-004-F47B77BC/Flag-Russia.jpg'></img>*/}
                 {/*</div>*/}
-                <div className={classes.graphContainer}>
+                <Box className={classes.graphContainer}>
 
                     <div className={classes.parentContainer}>
                         <h1 className={classes.graphIndicator}>{indicators[props.indicator]}</h1>
@@ -414,9 +415,9 @@ function GraphContainer(props) {
                     />
 
 
-                </div>
+                </Box>
             </Box>
-        </Box>
+        </div>
     );
 }
 

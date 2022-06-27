@@ -8,16 +8,15 @@ import {countries, getGraphColor, indicators} from './constants'
 import CountrySelector from './CountrySelector';
 import IndicatorSelector from './IndicatorSelector';
 import Typography from '@mui/material/Typography';
-import { makeStyles, createStyles, useTheme } from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import {
   IconButton,
   Box, Toolbar, Button, Menu, AppBar, MenuItem,
-  createMuiTheme, createTheme
+  createStyles, useTheme, createTheme, ThemeProvider
 } from '@mui/material'
 import { render } from 'react-dom';
 import worldBankService from "./services/worldBankService";
 import {WorldBankContext} from "./WorldBankContext";
-import {ThemeProvider} from "@emotion/react";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Countries from "./Countries";
 
@@ -39,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       fontFamily: 'Helvetica Neue, Helvetica, Arial',
       letterSpacing: '-0.03em',
+      // backgroundColor: 'black',
   },
   categoryTitle: {
     fontSize: 13,
@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 100,
   },
   hoverStyle: {
+    width: 76,
     '&:hover': {
       transition: '0.15s',
       transform: 'scale(1.05)'
@@ -86,6 +87,15 @@ const useStyles = makeStyles((theme) => ({
     },
     transition: '0.15s'
   },
+  toolbar: {
+    minHeight: 128,
+    paddingLeft: 41,
+    paddingRight: 41,
+  },
+  menubarLink: {
+    marginLeft: 25,
+    marginRight: 25
+  }
 
 }));
 
@@ -106,7 +116,7 @@ function App() {
   const [country, setCountry] = React.useState(parsed.countries !== undefined ? parsed.countries.split(";") : ["US"]);
   const [indicator, setIndicator] = React.useState(parsed.indicators !== undefined ? parsed.indicators.split(";") : ["SP.DYN.TFRT.IN"]);
   const [graphData, setGraphData] = React.useState({});
-  const [darkmode, setDarkmode] = React.useState(true);
+  const [darkmode, setDarkmode] = React.useState(false);
 
   const { graphReducerData, dispatch } = useContext(WorldBankContext);
 
@@ -158,7 +168,24 @@ function App() {
       },
       spacer: {
         marginTop: 20,
-      }
+      },
+      sidebar: {
+        width: 250,
+        // [theme.breakpoints.down('sm')]: {
+        //   columnGap: 30,
+        //   marginBottom: 150,
+        // },
+      },
+      components: {
+        Toolbar: {
+          styleOverrides: {
+            dense: {
+              height: 128,
+              minHeight: 128
+            }
+          }
+        }
+      },
     }
   });
 
@@ -207,38 +234,52 @@ function App() {
 
   };
 
+  const swapTheme = () => {
+    darkmode ? setDarkmode(false) : setDarkmode(true);
+  }
+
   return (
       <ThemeProvider theme={theme}>
-      <Box className="App" sx={{  bgcolor: 'background.paper' }}>
-      <Box>
-        <AppBar position="fixed" sx={{  bgcolor: 'background.paper', boxShadow: 'none', color: 'text.primary' }}>
-          <Toolbar>
-            <img className={classes.hoverStyle} src={darkmode ? '/sphrelogo_light.svg' : '/sphrelogo.svg'} alt="logo" />
-            <IconButton
+      <Box className="App" sx={{  bgcolor: 'background.default' }}>
+      <Box sx={{  bgcolor: 'background.default' }}>
+        <AppBar position="fixed" sx={{ boxShadow: 'none', color: 'text.primary' }}>
+          <Toolbar className={classes.toolbar} sx={{ bgcolor: 'background.paper', pr: 4, pl: 4, pt: 2, pb: 2 }}>
+            {/*<Box sx={{  bgcolor: 'background.paper', marginLeft: 60, marginRight: 60 }}>*/}
+            <Box display='flex' flexGrow={1}>
+              <IconButton
                 size="large"
-                edge="start"
+                edge="end"
                 color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-            >
-            </IconButton>
-              <Menu />
+                aria-label="info"
+                // sx={{ ml: 1 }}
+              >
+                <img className={classes.hoverStyle} src={darkmode ? '/sphrelogo_light.svg' : '/sphrelogo.svg'} alt="logo" />
+              </IconButton>
+            </Box>
+
+            <Box display='flex' flexGrow={1}>
+            {/*<Menu />*/}
               {/*<Typography onClick={() => history.push('/about')} sx={{ minWidth: 100 }}>About</Typography>*/}
-              <Typography onClick={() => history.push('/trends')} sx={{ minWidth: 150 }}>Trends</Typography>
+              <Typography className={classes.menubarLink} sx={{ color: 'text.secondary', ml: 2, mr: 2 }} onClick={() => history.push('/trends')}>Comparison</Typography>
               {/*<Typography onClick={() => history.push('/comparison')} sx={{ minWidth: 100 }}>Comparison</Typography>*/}
-              <Typography onClick={() => history.push('/indicators')} sx={{ minWidth: 150 }}>Indicators</Typography>
-              <Typography onClick={() => history.push('/countries')} sx={{ minWidth: 150 }}>Countries</Typography>
+              <Typography className={classes.menubarLink} sx={{ color: 'text.secondary', ml: 2, mr: 2 }} onClick={() => history.push('/indicators')}>Indicators</Typography>
+              <Typography className={classes.menubarLink} sx={{ color: 'text.secondary', ml: 2, mr: 2 }} onClick={() => history.push('/countries')} >Countries</Typography>
+              <Typography className={classes.menubarLink} sx={{ color: 'text.secondary', ml: 2, mr: 2 }} onClick={() => history.push('/trends')} >About</Typography>
+            </Box>
+            <Box>
+              <IconButton
+                  size="large"
+                  edge="end"
+                  color="inherit"
+                  aria-label="info"
+                  sx={{ color: 'text.secondary' }}
+                  onClick={() => swapTheme()}
+              >
+                <InfoOutlinedIcon/>
+              </IconButton>
+            </Box>
+            {/*</Box>*/}
 
-
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-            >
-              <InfoOutlinedIcon/>
-            </IconButton>
 
 
             {/*<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>*/}
@@ -250,7 +291,7 @@ function App() {
 
       <Box className={classes.content}>
 
-    <Box style={{width: 250, position: 'fixed', padding: "40px 0 40px 40px", maxWidth: 300, float: "left", height: "100vh", display: "block", paddingTop: 20}}>
+    <Box className={classes.sidebar} style={{ position: 'fixed', padding: "40px 0 40px 40px", float: "left", height: "100vh", display: "block", paddingTop: 20}}>
 
         <CountrySelector options={countries} onSelect={handleCountrySelection} selectedOptions={country} />
         <IndicatorSelector options={indicators} onSelect={handleIndicatorSelection} selectedOptions={indicator} />
@@ -259,13 +300,17 @@ function App() {
           </Box>
       
       </Box>
-      <Box style={{marginLeft: 250}}>
-      <Router history={history}>
-        <Switch>
+      <Box sx={{ bgcolor: 'background.default' }} style={{ marginLeft: 250 }}>
+      <Router history={history} sx={{ bgcolor: 'background.default'}}>
+        <Box  sx={{ bgcolor: 'background.default'}}>
+        <Switch sx={{ bgcolor: 'background.default'}}>
+          <Box  sx={{ bgcolor: 'background.default'}}>
           <Route path="/countries" key={"Countries"} component={(props) => <Countries {...props} />}/>
           <Route path="/indicators" key={"Indicators"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
           <Route path="/:query" key={"Graph"} component={(props) => <GraphContent {...props} country={country} indicator={indicator} />}/>
+          </Box>
         </Switch>
+        </Box>
       </Router>
       </Box>
       </Box>

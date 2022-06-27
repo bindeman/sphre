@@ -83,6 +83,7 @@ export const graphColors = [
 
 
 export const graphOptions = {
+  responsive: true,
   point: {
     borderWidth: 0,
     radius: 2,
@@ -91,39 +92,72 @@ export const graphOptions = {
     color: 'rgba(0,0,0,0)',
   },
   scales: {
-    x: {
+    xAxes: [{
+      display: true,
       type: 'linear',
-    }
+      gridLines: {
+        borderDashOffset: 0,
+        display: true,
+        color: 'rgba(255, 255, 255, .1)'
+      },
+      ticks: {
+        autoSkip: false,
+        callback: (value, index, values) => {
+          console.log('valueskol', values)
+          return value
+        },
+        beginAtZero: true,
+        padding: 20,
+
+        min: 1,
+      },
+    }],
+    yAxes: [{
+      display: true,
+      type: 'linear',
+      position: 'left',
+      gridLines: {
+        display: true,
+        color: 'rgba(255, 255, 255, .1)',
+        drawBorder: false,
+        offsetGridLines: true,
+        tickMarkLength: 0,
+        drawOnChartArea: true
+      },
+      ticks: {
+        padding: 0,
+      }
+    }]
   },
   plugins: {
     legend: {
       display: false
     },
-    tooltip: {
-      mode: "interpolate",
-      intersect: false,
+    // tooltip: {
+    //   mode: "interpolate",
+    //   intersect: false,
+    // },
+    // crosshair: {
+    //   line: {
+    //     color: '#F66',  // crosshair line color
+    //     width: 3        // crosshair line width
+    //   },
+      // zoom: {
+      //   enabled: true,                                      // enable zooming
+      //   zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box
+      //   zoomboxBorderColor: '#48F',                         // border color of zoom box
+      //   zoomButtonText: 'Reset Zoom',                       // reset zoom button text
+      //   zoomButtonClass: 'reset-zoom',                      // reset zoom button class
+      // },
+      // callbacks: {
+      //   beforeZoom: () => function(start, end) {                  // called before zoom, return false to prevent zoom
+      //     return true;
+      //   },
+      //   afterZoom: () => function(start, end) {                   // called after zoom
+      //   }
+      // }
     },
-    crosshair: {
-      line: {
-        color: '#F66',  // crosshair line color
-        width: 3        // crosshair line width
-      },
-      zoom: {
-        enabled: true,                                      // enable zooming
-        zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box
-        zoomboxBorderColor: '#48F',                         // border color of zoom box
-        zoomButtonText: 'Reset Zoom',                       // reset zoom button text
-        zoomButtonClass: 'reset-zoom',                      // reset zoom button class
-      },
-      callbacks: {
-        beforeZoom: () => function(start, end) {                  // called before zoom, return false to prevent zoom
-          return true;
-        },
-        afterZoom: () => function(start, end) {                   // called after zoom
-        }
-      }
-    }
-  }
+
 
 
 
