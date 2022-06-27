@@ -110,14 +110,15 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 400,
         textAlign: 'left',
         fontSize: 16,
+        marginBottom: 12,
         color: '#B8B8B8',
         textTransform: 'uppercase',
-        // [theme.breakpoints.down('sm')]: {
-        //     fontSize: 14,
-        // },
-        // [theme.breakpoints.down('xs')]: {
-        //     fontSize: 12,
-        // },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: 14,
+        },
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 11,
+        },
     },
     graphIndicator: {
         fontWeight: 400,

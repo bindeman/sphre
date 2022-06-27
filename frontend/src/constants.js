@@ -92,6 +92,23 @@ export const graphOptions = {
     color: 'rgba(0,0,0,0)',
   },
   scales: {
+    y: {
+      ticks: {
+        callback: function(value, index, ticks) {
+          return millify(value, {
+            precision: 2,
+            lowercase: false,
+          });
+        }
+      },
+    },
+    x: {
+      ticks: {
+        callback: function(value, index, ticks) {
+          return `${value}`
+        }
+      },
+    },
     xAxes: [{
       display: true,
       type: 'linear',
@@ -104,7 +121,7 @@ export const graphOptions = {
         autoSkip: false,
         callback: (value, index, values) => {
           console.log('valueskol', values)
-          return value
+          return 10
         },
         beginAtZero: true,
         padding: 20,
@@ -126,6 +143,10 @@ export const graphOptions = {
       },
       ticks: {
         padding: 0,
+        callback: (value, index, values) => {
+          console.log('valueskol', values)
+          return 20
+        },
       }
     }]
   },

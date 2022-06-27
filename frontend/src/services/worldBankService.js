@@ -25,7 +25,7 @@ const WorldBankService = {
             dataPoints.map((item) => {
                 if (item.value !== null) {
                     if(data[indicator][country])
-                    data[indicator][country].push({x: parseFloat(`${item.date}.1`), y: item.value});
+                    data[indicator][country].push({x: parseFloat(`${item.date}`), y: item.value});
                 }
             });
         }
@@ -79,7 +79,6 @@ const WorldBankService = {
 
     getCountriesAndIndicatorOptimized: function (countries, indicator, data) {
         let promises = [];
-        console.log("here we are");
 
         if(data[indicator] === undefined) data[indicator] = {};
         for(const country of countries) {
